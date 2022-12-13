@@ -1,0 +1,32 @@
+$headerBarHeight: 75px;
+
+mat-card {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.error-msg {
+  color: rgb(255, 69, 69);
+  width: 120px;
+  margin-left: 15px;
+  text-align: center;
+}
+
+%flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex-column {
+  @extend %flex;
+
+  flex-direction: column;
+}
+
+.flex-row {
+    @extend %flex;
+    
+    flex-direction: row;
+    justify-content: space-between;
+    width: -moz-available;
+  }

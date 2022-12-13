@@ -1,0 +1,48 @@
+<mat-card>
+  <app-content-header [previous]="'/login'"></app-content-header>
+
+  <mat-card-content>
+    <form class="flex-column" [formGroup]="forms" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Usuario"
+          id="usuario"
+          formControlName="usuario"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input
+          matInput
+          type="password"
+          placeholder="Senha"
+          id="senha"
+          formControlName="senha"
+        />
+      </mat-form-field>
+
+      <div class="flex-row">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="forms.invalid"
+        >
+          Login
+        </button>
+
+        <div class="error-msg">{{ errorMessage }}</div>
+      </div>
+    </form>
+  </mat-card-content>
+
+  <mat-card-footer style="height: 4px">
+    <span [hidden]="!loading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </span>
+  </mat-card-footer>
+</mat-card>

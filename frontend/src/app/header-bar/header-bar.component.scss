@@ -1,0 +1,17 @@
+@import '/src/app/variables.scss';
+
+
+mat-toolbar {
+  height: $headerBarHeight;
+  justify-content: space-between;
+}
+
+mat-toolbar h1 {
+  font-size: 34px;
+  text-align: center;
+}
+
+img.logo-sfz {
+    height: 50px;
+    margin: 5px;
+}

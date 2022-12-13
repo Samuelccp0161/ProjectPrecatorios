@@ -1,0 +1,15 @@
+@import '/src/app/variables.scss';
+
+.flex-right {
+  display: flex;
+  width: 100%;
+  height: calc(100% - $headerBarHeight);
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.content-box {
+  display: flex;
+  width: 50%;
+  justify-content: center;
+}
