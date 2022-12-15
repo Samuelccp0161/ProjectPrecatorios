@@ -5,6 +5,7 @@ import br.gov.al.sefaz.tributario.pdfhandler.PDF;
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
 import br.gov.al.sefaz.tributario.selenium.PaginaPrecatorio;
 import br.gov.al.sefaz.tributario.service.FileStorageService;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ public class TributarioController {
 
     TributarioController(FileStorageService storageService) {
         this.storageService = storageService;
+        WebDriverManager.chromedriver().setup();
     }
 
     private PaginaPrecatorio paginaPrecatorio;

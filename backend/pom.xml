@@ -81,9 +81,11 @@
             <version>5.9.0</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>5.2.1</version>
         </dependency>
     </dependencies>
 

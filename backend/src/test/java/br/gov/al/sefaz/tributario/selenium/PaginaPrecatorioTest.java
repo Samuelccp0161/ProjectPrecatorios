@@ -1,6 +1,8 @@
 package br.gov.al.sefaz.tributario.selenium;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -13,6 +15,11 @@ public class PaginaPrecatorioTest {
     PaginaPrecatorio paginaPrecatorio;
     final String usuario = "sdcabral";
     final String senha = "Samuka0810";
+
+    @BeforeAll
+    static void beforeAll() {
+        WebDriverManager.chromedriver().setup();
+    }
 
     @BeforeEach
     public void setUp(){

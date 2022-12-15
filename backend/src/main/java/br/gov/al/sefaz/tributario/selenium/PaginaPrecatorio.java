@@ -2,7 +2,6 @@ package br.gov.al.sefaz.tributario.selenium;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverLogLevel;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class PaginaPrecatorio {
@@ -21,7 +20,8 @@ public class PaginaPrecatorio {
 
     private static ChromeOptions criarOptions() {
         ChromeOptions options = new ChromeOptions();
-        options.setLogLevel(ChromeDriverLogLevel.OFF);
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-dev-shm-usage");
         return options;
     }
 
@@ -94,9 +94,5 @@ public class PaginaPrecatorio {
     }
     public void maximizar() {
         driver.manage().window().maximize();
-    }
-
-    public void back() {
-        driver.navigate().back();
     }
 }
