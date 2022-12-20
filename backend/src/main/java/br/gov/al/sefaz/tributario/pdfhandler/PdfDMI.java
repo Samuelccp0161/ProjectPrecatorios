@@ -18,7 +18,7 @@ public class PdfDMI extends PDF {
     protected PdfDMI(File file) throws IOException {
         super(file);
         this.areaDireita = pagina.getAreaRelativa(50, 48, 100, 100);
-        this.areaEsquerda = pagina.getAreaRelativa(50, 0, 70, 50);
+        this.areaEsquerda = pagina.getAreaRelativa(50, 0, 80, 47);
     }
 
     public Map<String, String> getTabela() {
@@ -34,10 +34,14 @@ public class PdfDMI extends PDF {
         int rowSize = table.getColCount();
         Map<String, String> dados =
                 converterTable(table, rowSize - 2, rowSize - 1);
+        System.out.println("tabelaDireita");
+        printTable(table);
 
         table = bea.extract(areaEsquerda.getPage(), areaEsquerda.detectTable()).get(0);
         Iterator<String> iter = table.getRows().stream()
                 .map(getTexto(table.getColCount() - 1)).iterator();
+        System.out.println("\n\ntabelaEsquerda");
+        printTable(table);
 
         while (iter.hasNext()) {
             String row = iter.next();
@@ -64,12 +68,12 @@ public class PdfDMI extends PDF {
     @Override protected Map<String, String> criarMapID() {
         Map<String, String> map = new HashMap<>();
 
-        map.put("Imposto Importação" , "valImpostoImportacao");
+        map.put("ImpostoImportação" , "valImpostoImportacao");
         map.put(               "IPI" , "valIPI");
         map.put(               "PIS" , "valPIS");
         map.put(            "COFINS" , "valCOFINS");
         map.put(      "Taxas/Multas" , "valOutrasTaxas");
-        map.put(     "ICMS p/ Saída" , "valTotNotaFiscalSaida");
+        map.put(     "ICMSp/Saída" , "valTotNotaFiscalSaida");
 
         return map;
     }

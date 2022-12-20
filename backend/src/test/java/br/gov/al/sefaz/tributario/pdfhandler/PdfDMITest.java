@@ -12,9 +12,13 @@ public class PdfDMITest {
     final File fileDMI1 = new File("src/test/resources/pdfs/DMI_1.pdf");
     final File fileDMI2 = new File("src/test/resources/pdfs/DMI_2.pdf");
     final File fileDMI3 = new File("src/test/resources/pdfs/DMI_3.pdf");
-
-    final File fileDI = new File("src/test/resources/pdfs/DI_1.pdf");
-
+    final File fileDMI4 = new File("src/test/resources/pdfs/DMI_4.pdf");
+    final File fileDMI5 = new File("src/test/resources/pdfs/DMI_5.pdf");
+    final File fileDMI6 = new File("src/test/resources/pdfs/DMI_6.pdf");
+    final File fileDMI7 = new File("src/test/resources/pdfs/DMI_7.pdf");
+    final File fileDMI8 = new File("src/test/resources/pdfs/DMI_8.pdf");
+    final File fileDMI9 = new File("src/test/resources/pdfs/DMI_9.pdf");
+    final File DMINaoValido = new File("src/test/resources/pdfs/DI_1.pdf");
 
     @Test
     public void lerDMI1() throws IOException {
@@ -76,6 +80,103 @@ public class PdfDMITest {
     }
 
     @Test
+    public void lerDMI4() throws IOException {
+        StrPair[] valoresEsperados = {
+                new StrPair(  "valMoedaEstrangeira", "5,3204"),
+                new StrPair("valTotNotaFiscalSaida", "269185,58"),
+                new StrPair( "valImpostoImportacao", "25005,21"),
+                new StrPair(               "valIPI", "19960,88"),
+                new StrPair(               "valPIS", "3416,52"),
+                new StrPair(            "valCOFINS", "15729,10"),
+                new StrPair(       "valOutrasTaxas", "1155,93"),
+                new StrPair(         "valCapatazia", "0,00"),
+                new StrPair(          "valAliquota", "4"),
+        };
+
+        PDF dmi = PDF.dmi(fileDMI4);
+        Map<String, String> dmiTabela = dmi.getTabela();
+
+        assertThat(dmiTabela).containsOnly(valoresEsperados);
+    }
+    @Test
+    public void lerDMI5() throws IOException {
+        StrPair[] valoresEsperados = {
+                new StrPair(  "valMoedaEstrangeira", "5,1948"),
+                new StrPair("valTotNotaFiscalSaida", "400017,28"),
+                new StrPair( "valImpostoImportacao", "26757,91"),
+                new StrPair(               "valIPI", "9928,30"),
+                new StrPair(               "valPIS", "5853,29"),
+                new StrPair(            "valCOFINS", "26897,27"),
+                new StrPair(       "valOutrasTaxas", "4913,40"),
+                new StrPair(         "valCapatazia", "0,00"),
+                new StrPair(          "valAliquota", "4"),
+        };
+
+        PDF dmi = PDF.dmi(fileDMI5);
+        Map<String, String> dmiTabela = dmi.getTabela();
+
+        assertThat(dmiTabela).containsOnly(valoresEsperados);
+    }
+    @Test
+    public void lerDMI6() throws IOException {
+        StrPair[] valoresEsperados = {
+                new StrPair(  "valMoedaEstrangeira", "5,3204"),
+                new StrPair("valTotNotaFiscalSaida", "112664,07"),
+                new StrPair( "valImpostoImportacao", "0,00"),
+                new StrPair(               "valIPI", "2563,38"),
+                new StrPair(               "valPIS", "1656,34"),
+                new StrPair(            "valCOFINS", "7611,29"),
+                new StrPair(       "valOutrasTaxas", "572,57"),
+                new StrPair(         "valCapatazia", "0,00"),
+                new StrPair(          "valAliquota", "12"),
+        };
+
+        PDF dmi = PDF.dmi(fileDMI6);
+        Map<String, String> dmiTabela = dmi.getTabela();
+
+        assertThat(dmiTabela).containsOnly(valoresEsperados);
+    }
+//    @Test
+//    public void lerDMI7() throws IOException {
+//        StrPair[] valoresEsperados = {
+//                new StrPair(  "valMoedaEstrangeira", "5,3204"),
+//                new StrPair("valTotNotaFiscalSaida", "89883,15"),
+//                new StrPair( "valImpostoImportacao", "9134,73"),
+//                new StrPair(               "valIPI", "4717,07"),
+//                new StrPair(               "valPIS", "1332,15"),
+//                new StrPair(            "valCOFINS", "6121,54"),
+//                new StrPair(       "valOutrasTaxas", "1546,69"),
+//                new StrPair(         "valCapatazia", "0,00"),
+//                new StrPair(          "valAliquota", "4"),
+//        };
+//
+//        PDF dmi = PDF.dmi(fileDMI7);
+//        Map<String, String> dmiTabela = dmi.getTabela();
+//
+//        assertThat(dmiTabela).containsOnly(valoresEsperados);
+//    }
+//@Test
+//public void lerDMI8() throws IOException {
+//    StrPair[] valoresEsperados = {
+//            new StrPair(  "valMoedaEstrangeira", "5,2806"),
+//            new StrPair("valTotNotaFiscalSaida", "112664,07"),
+//            new StrPair( "valImpostoImportacao", "28665,63"),
+//            new StrPair(               "valIPI", "0,00"),
+//            new StrPair(               "valPIS", "3762,37"),
+//            new StrPair(            "valCOFINS", "17288,96"),
+//            new StrPair(       "valOutrasTaxas", "9852,44"),
+//            new StrPair(         "valCapatazia", "0,00"),
+//            new StrPair(          "valAliquota", "18"),
+//    };
+//
+//    PDF dmi = PDF.dmi(fileDMI8);
+//    Map<String, String> dmiTabela = dmi.getTabela();
+//
+//    assertThat(dmiTabela).containsOnly(valoresEsperados);
+//}
+
+
+    @Test
     public void validarDMIComArquivoValido() throws IOException {
         PDF dmi = PDF.dmi(fileDMI1);
         assertThat(dmi.isValido()).isTrue();
@@ -83,7 +184,7 @@ public class PdfDMITest {
 
     @Test
     public void validarDMIComArquivoInvalido() throws IOException {
-        PDF dmi = PDF.dmi(fileDI);
+        PDF dmi = PDF.dmi(DMINaoValido);
         assertThat(dmi.isValido()).isFalse();
     }
 }

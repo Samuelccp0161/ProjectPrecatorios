@@ -12,8 +12,11 @@ public class PdfDITest {
     final File fileDI1 = new File("src/test/resources/pdfs/DI_1.pdf");
     final File fileDI2 = new File("src/test/resources/pdfs/DI_2.pdf");
     final File fileDI3 = new File("src/test/resources/pdfs/DI_3.pdf");
+    final File fileDI4 = new File("src/test/resources/pdfs/DI_4.pdf");
+    final File fileDI5 = new File("src/test/resources/pdfs/DI_5.pdf");
+    final File fileDI6 = new File("src/test/resources/pdfs/DI_6.pdf");
 
-    final File fileDMI = new File("src/test/resources/pdfs/DMI_1.pdf");
+    final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
 
 
     @Test
@@ -55,6 +58,43 @@ public class PdfDITest {
 
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
+    @Test
+    public void lerDI4() throws IOException {
+        StrPair[] valoresEsperados = {
+                new StrPair("valFrete", "10830,00"),
+                new StrPair("valSeguro", "165,23"),
+                new StrPair("valVMLE", "42660,00"),
+        };
+        PDF di = PDF.di(fileDI4);
+        Map<String, String> diTabela = di.getTabela();
+
+        assertThat(diTabela).containsOnly(valoresEsperados);
+    }
+    @Test
+    public void lerDI5() throws IOException {
+        StrPair[] valoresEsperados = {
+                new StrPair("valFrete", "6756,00"),
+                new StrPair("valSeguro", "0,00"),
+                new StrPair("valVMLE", "40301,25"),
+        };
+        PDF di = PDF.di(fileDI5);
+        Map<String, String> diTabela = di.getTabela();
+
+        assertThat(diTabela).containsOnly(valoresEsperados);
+    }
+    @Test
+    public void lerDI6() throws IOException {
+        StrPair[] valoresEsperados = {
+                new StrPair("valFrete", "4520,00"),
+                new StrPair("valSeguro", "0,00"),
+                new StrPair("valVMLE", "40883,56"),
+        };
+        PDF di = PDF.di(fileDI6);
+        Map<String, String> diTabela = di.getTabela();
+
+        assertThat(diTabela).containsOnly(valoresEsperados);
+    }
+
 
     @Test
     public void validarDIComArquivoValido() throws IOException {
@@ -64,7 +104,7 @@ public class PdfDITest {
 
     @Test
     public void validarDIComArquivoInvalido() throws IOException {
-        PDF di = PDF.di(fileDMI);
+        PDF di = PDF.di(DINaoValido);
         assertThat(di.isValido()).isFalse();
     }
 }

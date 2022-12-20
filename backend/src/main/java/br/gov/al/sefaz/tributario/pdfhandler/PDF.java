@@ -53,6 +53,8 @@ public abstract class PDF {
             String campo = campos.next();
             String valor = valores.next();
 
+            valor = (valor.equals("-")) ? "0,00" : valor;
+
             for (String key : mapCampoId.keySet())
                 if (campo.contains(key)) {
                     String id = mapCampoId.remove(key);
@@ -64,7 +66,7 @@ public abstract class PDF {
     }
 
     protected static Function<List<RectangularTextContainer>, String> getTexto(int i) {
-        return r -> stripAndRemove(r.get(i).getText(), "[.%]");
+        return r -> stripAndRemove(r.get(i).getText(), "[. %]");
     }
 
     @SuppressWarnings("unused")
