@@ -1,30 +1,15 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
-import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 public class PdfDITest {
-    final File fileDI1 = new File("src/test/resources/pdfs/DI_1.pdf");
-    final File fileDI2 = new File("src/test/resources/pdfs/DI_2.pdf");
-    final File fileDI3 = new File("src/test/resources/pdfs/DI_3.pdf");
-    final File fileDI4 = new File("src/test/resources/pdfs/DI_4.pdf");
-    final File fileDI5 = new File("src/test/resources/pdfs/DI_5.pdf");
-    final File fileDI6 = new File("src/test/resources/pdfs/DI_6.pdf");
-    final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
-
     static String data;
     @BeforeAll
     static void beforeAll() {
@@ -32,13 +17,14 @@ public class PdfDITest {
         LocalDate date = LocalDate.now();
 
         DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
-        String dataFormatada = formatterData.format(date);
 
-        data = dataFormatada;
+        data = formatterData.format(date);
     }
 
     @Test
     public void lerDI1() throws IOException {
+        final File fileDI1 = new File("src/test/resources/pdfs/DI_1.pdf");
+
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "7043,00"),
                 new StrPair("valSeguro", "0,00"),
@@ -54,6 +40,8 @@ public class PdfDITest {
     }
     @Test
     public void lerDI2() throws IOException {
+        final File fileDI2 = new File("src/test/resources/pdfs/DI_2.pdf");
+
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "5750,00"),
                 new StrPair("valSeguro", "0,00"),
@@ -68,6 +56,8 @@ public class PdfDITest {
     }
     @Test
     public void lerDI3() throws IOException {
+        final File fileDI3 = new File("src/test/resources/pdfs/DI_3.pdf");
+
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "7709,00"),
                 new StrPair("valSeguro", "152,34"),
@@ -82,6 +72,8 @@ public class PdfDITest {
     }
     @Test
     public void lerDI4() throws IOException {
+        final File fileDI4 = new File("src/test/resources/pdfs/DI_4.pdf");
+
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "10830,00"),
                 new StrPair("valSeguro", "165,23"),
@@ -96,6 +88,8 @@ public class PdfDITest {
     }
     @Test
     public void lerDI5() throws IOException {
+        final File fileDI5 = new File("src/test/resources/pdfs/DI_5.pdf");
+
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "6756,00"),
                 new StrPair("valSeguro", "0,00"),
@@ -110,6 +104,8 @@ public class PdfDITest {
     }
     @Test
     public void lerDI6() throws IOException {
+        final File fileDI6 = new File("src/test/resources/pdfs/DI_6.pdf");
+
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "4520,00"),
                 new StrPair("valSeguro", "0,00"),
@@ -124,18 +120,16 @@ public class PdfDITest {
     }
     @Test
     public void validarDIComArquivoValido() throws IOException {
+        final File fileDI1 = new File("src/test/resources/pdfs/DI_1.pdf");
+
         PDF di = PDF.di(fileDI1);
         assertThat(di.isValido()).isTrue();
     }
     @Test
     public void validarDIComArquivoInvalido() throws IOException {
+        final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
+
         PDF di = PDF.di(DINaoValido);
         assertThat(di.isValido()).isFalse();
     }
-    @Test
-    public void NumeroDI() throws IOException {
-        PdfDI di = (PdfDI) PDF.di(fileDI6);
-        assertThat(di.numeroDI()).isEqualTo("2222884836");
-    }
-
 }
