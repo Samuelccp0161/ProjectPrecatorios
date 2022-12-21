@@ -6,6 +6,7 @@ import technology.tabula.extractors.BasicExtractionAlgorithm;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,9 @@ public class PdfDI extends PDF{
 
     @Override public Map<String, String> getTabela() {
         Table table = extrairTable();
-        return converterTable(table, 0, table.getColCount() - 1);
+        Map<String, String> tabela = converterTable(table, 0, table.getColCount() - 1);
+        tabela.put("numDI", numeroDI());
+        return tabela;
     }
 
     @Override protected Map<String, String> criarMapID() {
@@ -44,5 +47,19 @@ public class PdfDI extends PDF{
         } catch (IOException e) {
             return false;
         }
+    }
+    public String numeroDI() {
+        String cabecalho;
+        try {
+            cabecalho = pagina.getCabecalho().toUpperCase();
+        } catch (IOException e) {
+            return "";
+        }
+        String line = cabecalho.lines()
+                .filter(str -> str.contains("DECLARAÇÃO:"))
+                .findFirst().orElse("")
+                .replaceAll("[/-]", "");
+
+        return Arrays.stream(line.split(" ")).skip(1).findFirst().orElse("");
     }
 }

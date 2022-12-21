@@ -1,5 +1,6 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
+import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 public class PdfDITest {
     final File fileDI1 = new File("src/test/resources/pdfs/DI_1.pdf");
@@ -15,9 +17,7 @@ public class PdfDITest {
     final File fileDI4 = new File("src/test/resources/pdfs/DI_4.pdf");
     final File fileDI5 = new File("src/test/resources/pdfs/DI_5.pdf");
     final File fileDI6 = new File("src/test/resources/pdfs/DI_6.pdf");
-
     final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
-
 
     @Test
     public void lerDI1() throws IOException {
@@ -25,6 +25,7 @@ public class PdfDITest {
                 new StrPair("valFrete", "7043,00"),
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "49600,27"),
+                new StrPair("numDI", "2216298998"),
         };
 
         PDF di = PDF.di(fileDI1);
@@ -32,26 +33,26 @@ public class PdfDITest {
 
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
-
     @Test
     public void lerDI2() throws IOException {
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "5750,00"),
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "116400,00"),
+                new StrPair("numDI", "2219578444"),
         };
         PDF di = PDF.di(fileDI2);
         Map<String, String> diTabela = di.getTabela();
 
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
-
     @Test
     public void lerDI3() throws IOException {
         StrPair[] valoresEsperados = {
                 new StrPair("valFrete", "7709,00"),
                 new StrPair("valSeguro", "152,34"),
                 new StrPair("valVMLE", "60935,93"),
+                new StrPair("numDI", "2219077631"),
         };
         PDF di = PDF.di(fileDI3);
         Map<String, String> diTabela = di.getTabela();
@@ -64,6 +65,7 @@ public class PdfDITest {
                 new StrPair("valFrete", "10830,00"),
                 new StrPair("valSeguro", "165,23"),
                 new StrPair("valVMLE", "42660,00"),
+                new StrPair("numDI", "2223920550"),
         };
         PDF di = PDF.di(fileDI4);
         Map<String, String> diTabela = di.getTabela();
@@ -76,6 +78,7 @@ public class PdfDITest {
                 new StrPair("valFrete", "6756,00"),
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "40301,25"),
+                new StrPair("numDI", "2224936795")
         };
         PDF di = PDF.di(fileDI5);
         Map<String, String> diTabela = di.getTabela();
@@ -88,23 +91,26 @@ public class PdfDITest {
                 new StrPair("valFrete", "4520,00"),
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "40883,56"),
+                new StrPair("numDI", "2222884836")
         };
         PDF di = PDF.di(fileDI6);
         Map<String, String> diTabela = di.getTabela();
 
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
-
-
     @Test
     public void validarDIComArquivoValido() throws IOException {
         PDF di = PDF.di(fileDI1);
         assertThat(di.isValido()).isTrue();
     }
-
     @Test
     public void validarDIComArquivoInvalido() throws IOException {
         PDF di = PDF.di(DINaoValido);
         assertThat(di.isValido()).isFalse();
+    }
+    @Test
+    public void NumeroDI() throws IOException {
+        PdfDI di = (PdfDI) PDF.di(fileDI6);
+        assertThat(di.numeroDI()).isEqualTo("2222884836");
     }
 }
