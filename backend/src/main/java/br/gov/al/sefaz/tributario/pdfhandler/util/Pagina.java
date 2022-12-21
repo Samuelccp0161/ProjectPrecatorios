@@ -22,21 +22,15 @@ public class Pagina {
         this.file = file;
     }
 
-    public static List<Pagina> doArquivo(File file) throws IOException {
-        List<Pagina> pages = new ArrayList<>();
-        try (PDDocument pdf = PDDocument.load(file)) {
-            ObjectExtractor oe = new ObjectExtractor(pdf);
-            oe.extract().forEachRemaining(pg -> pages.add(new Pagina(pg, file)));
-        }
-        return pages;
-
-    }
-
     public static Pagina umDoArquivo(File file) throws IOException {
         try (PDDocument pdf = PDDocument.load(file)) {
             ObjectExtractor oe = new ObjectExtractor(pdf);
             return new Pagina(oe.extract(1), file);
         }
+    }
+    public Pagina getArea(float top, float left, float bottom, float right) {
+        Page newPage = page.getArea(top, left, bottom, right);
+        return new Pagina(newPage, file);
     }
 
     public Pagina getAreaRelativa(float top, float left, float bottom, float right) {
@@ -80,5 +74,9 @@ public class Pagina {
         }
 
         return stripper.getTextForRegion("header");
+    }
+
+    public float width() {
+        return page.width;
     }
 }
