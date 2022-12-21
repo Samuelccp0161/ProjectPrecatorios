@@ -6,7 +6,10 @@ import technology.tabula.extractors.BasicExtractionAlgorithm;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +30,7 @@ public class PdfDI extends PDF{
         Table table = extrairTable();
         Map<String, String> tabela = converterTable(table, 0, table.getColCount() - 1);
         tabela.put("numDI", numeroDI());
+        tabela.put("dataDMI", dataAtual());
         return tabela;
     }
 
@@ -62,4 +66,13 @@ public class PdfDI extends PDF{
 
         return Arrays.stream(line.split(" ")).skip(1).findFirst().orElse("");
     }
+    public String dataAtual(){
+        LocalDate date = LocalDate.now();
+
+        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
+        String dataFormatada = formatterData.format(date);
+
+        return dataFormatada;
+    }
+
 }

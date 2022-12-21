@@ -1,12 +1,18 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
 import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
@@ -19,6 +25,18 @@ public class PdfDITest {
     final File fileDI6 = new File("src/test/resources/pdfs/DI_6.pdf");
     final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
 
+    static String data;
+    @BeforeAll
+    static void beforeAll() {
+
+        LocalDate date = LocalDate.now();
+
+        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
+        String dataFormatada = formatterData.format(date);
+
+        data = dataFormatada;
+    }
+
     @Test
     public void lerDI1() throws IOException {
         StrPair[] valoresEsperados = {
@@ -26,6 +44,7 @@ public class PdfDITest {
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "49600,27"),
                 new StrPair("numDI", "2216298998"),
+                new StrPair("dataDMI", data),
         };
 
         PDF di = PDF.di(fileDI1);
@@ -40,6 +59,7 @@ public class PdfDITest {
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "116400,00"),
                 new StrPair("numDI", "2219578444"),
+                new StrPair("dataDMI", data),
         };
         PDF di = PDF.di(fileDI2);
         Map<String, String> diTabela = di.getTabela();
@@ -53,6 +73,7 @@ public class PdfDITest {
                 new StrPair("valSeguro", "152,34"),
                 new StrPair("valVMLE", "60935,93"),
                 new StrPair("numDI", "2219077631"),
+                new StrPair("dataDMI", data),
         };
         PDF di = PDF.di(fileDI3);
         Map<String, String> diTabela = di.getTabela();
@@ -66,6 +87,7 @@ public class PdfDITest {
                 new StrPair("valSeguro", "165,23"),
                 new StrPair("valVMLE", "42660,00"),
                 new StrPair("numDI", "2223920550"),
+                new StrPair("dataDMI", data),
         };
         PDF di = PDF.di(fileDI4);
         Map<String, String> diTabela = di.getTabela();
@@ -78,7 +100,8 @@ public class PdfDITest {
                 new StrPair("valFrete", "6756,00"),
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "40301,25"),
-                new StrPair("numDI", "2224936795")
+                new StrPair("numDI", "2224936795"),
+                new StrPair("dataDMI", data),
         };
         PDF di = PDF.di(fileDI5);
         Map<String, String> diTabela = di.getTabela();
@@ -91,7 +114,8 @@ public class PdfDITest {
                 new StrPair("valFrete", "4520,00"),
                 new StrPair("valSeguro", "0,00"),
                 new StrPair("valVMLE", "40883,56"),
-                new StrPair("numDI", "2222884836")
+                new StrPair("numDI", "2222884836"),
+                new StrPair("dataDMI", data),
         };
         PDF di = PDF.di(fileDI6);
         Map<String, String> diTabela = di.getTabela();
@@ -113,4 +137,5 @@ public class PdfDITest {
         PdfDI di = (PdfDI) PDF.di(fileDI6);
         assertThat(di.numeroDI()).isEqualTo("2222884836");
     }
+
 }
