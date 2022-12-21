@@ -38,7 +38,7 @@ public class PdfDMITest {
         StrPair[] valoresEsperados = {
             new StrPair(  "valMoedaEstrangeira", "5,1411"),
             new StrPair("valTotNotaFiscalSaida", "803286,46"),
-            new StrPair( "valImpostoImportacao", ""),
+            new StrPair( "valImpostoImportacao", "0,00"),
             new StrPair(               "valIPI", "61228,57"),
             new StrPair(               "valPIS", "13187,69"),
             new StrPair(            "valCOFINS", "66880,44"),
@@ -138,12 +138,12 @@ public class PdfDMITest {
 
         assertThat(dmiTabela).containsOnly(valoresEsperados);
     }
-    @Test @Disabled("Necessario que o tamanho e posição da tabela sejam descobertos dinamicamente")
+    @Test
     public void lerDMI7() throws IOException {
         final File fileDMI7 = new File("src/test/resources/pdfs/DMI_7.pdf");
 
         StrPair[] valoresEsperados = {
-                new StrPair(  "valMoedaEstrangeira", "5,3204"),
+                new StrPair(  "valMoedaEstrangeira", "5,3406"),
                 new StrPair("valTotNotaFiscalSaida", "89883,15"),
                 new StrPair( "valImpostoImportacao", "9134,73"),
                 new StrPair(               "valIPI", "4717,07"),

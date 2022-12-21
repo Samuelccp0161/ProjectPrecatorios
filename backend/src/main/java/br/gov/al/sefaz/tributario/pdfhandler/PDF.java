@@ -7,6 +7,7 @@ import technology.tabula.Table;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,12 +18,14 @@ import static br.gov.al.sefaz.tributario.pdfhandler.util.StrUtil.stripAndRemove;
 import static br.gov.al.sefaz.tributario.pdfhandler.util.StrUtil.truncar;
 
 public abstract class PDF {
+    protected Path path;
     protected Pagina pagina;
 
     public enum Tipo {DI, DMI}
 
     PDF(File file) throws IOException {
         this.pagina = Pagina.umDoArquivo(file);
+        this.path = file.toPath();
     }
 
     public static PDF dmi(File file) throws IOException {
@@ -53,7 +56,7 @@ public abstract class PDF {
             String campo = campos.next();
             String valor = valores.next();
 
-            valor = (valor.equals("-")) ? "0,00" : valor;
+            valor = (valor.equals("")) ? "0,00" : valor;
 
             for (String key : mapCampoId.keySet())
                 if (campo.contains(key)) {
@@ -66,7 +69,7 @@ public abstract class PDF {
     }
 
     protected static Function<List<RectangularTextContainer>, String> getTexto(int i) {
-        return r -> stripAndRemove(r.get(i).getText(), "[. %]");
+        return r -> stripAndRemove(r.get(i).getText(), "[. %-]");
     }
 
     @SuppressWarnings("unused")
@@ -83,7 +86,7 @@ public abstract class PDF {
         System.out.println("#----------------------#");
     }
 
-    abstract public Map<String, String> getTabela();
+    abstract public Map<String, String> getTabela() throws IOException;
 
     abstract protected Map<String, String> criarMapID();
 
