@@ -1,10 +1,7 @@
 package br.gov.al.sefaz.tributario.selenium;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -12,22 +9,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class PaginaPrecatorioTest {
-    PaginaPrecatorio paginaPrecatorio;
+    static PaginaPrecatorio paginaPrecatorio;
     final String usuario = "sdcabral";
     final String senha = "Samuka0810";
 
     @BeforeAll
     static void beforeAll() {
         WebDriverManager.chromedriver().setup();
-    }
-
-    @BeforeEach
-    public void setUp(){
         paginaPrecatorio = PaginaPrecatorio.criarHeadless();
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    static void afterAll() {
         paginaPrecatorio.close();
     }
 
