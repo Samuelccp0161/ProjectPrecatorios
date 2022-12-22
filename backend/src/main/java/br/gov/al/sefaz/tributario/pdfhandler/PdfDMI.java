@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 public class PdfDMI extends PDF {
-    private Pagina areaDireita;
-    private Pagina areaEsquerda;
+    private Pagina areaTabelaDireita;
+    private Pagina areaTabelaEsquerda;
 
     protected PdfDMI(File file) throws IOException {
         super(file);
     }
 
-    private Pagina getAreaDireita() throws IOException {
+    private void setAreaTabelaDireita() throws IOException {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
@@ -36,11 +36,11 @@ public class PdfDMI extends PDF {
             float bottom = bottomPos.getY() + bottomPos.getHeight();
             float left = leftPos.getX() - leftPos.getCharWidth() ;
 
-            return pagina.getArea(top, left, bottom, pagina.width());
+            this.areaTabelaDireita = pagina.getArea(top, left, bottom, pagina.width());
         }
     }
 
-    private Pagina getAreaEsquerda() throws IOException {
+    private void setAreaTabelaEsquerda() throws IOException {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
@@ -52,13 +52,13 @@ public class PdfDMI extends PDF {
             float bottom = bottomPos.getY() - bottomPos.getHeight() * 2;
             float right = rightPos.getX() - rightPos.getCharWidth() * 2 ;
 
-            return pagina.getArea(top, 0, bottom, right);
+            this.areaTabelaEsquerda = pagina.getArea(top, 0, bottom, right);
         }
     }
 
     public Map<String, String> getTabela() throws IOException {
-        this.areaDireita = getAreaDireita();
-        this.areaEsquerda = getAreaEsquerda();
+        setAreaTabelaDireita();
+        setAreaTabelaEsquerda();
 
         Map<String, String> dados = extrairDados();
         dados.put("valCapatazia", "0,00");
@@ -68,13 +68,13 @@ public class PdfDMI extends PDF {
     private Map<String, String> extrairDados() {
         BasicExtractionAlgorithm bea = new BasicExtractionAlgorithm();
 //        Table table = bea.extract(areaDireita.getPage(), areaDireita.detectTable()).get(0);
-        Table table = bea.extract(areaDireita.getPage()).get(0);
+        Table table = bea.extract(areaTabelaDireita.getPage()).get(0);
 
         int rowSize = table.getColCount();
         Map<String, String> dados =
                 converterTable(table, getColCampo(table), rowSize - 1);
 
-        table = bea.extract(areaEsquerda.getPage(), areaEsquerda.detectTable()).get(0);
+        table = bea.extract(areaTabelaEsquerda.getPage(), areaTabelaEsquerda.detectTable()).get(0);
         Iterator<String> iter = table.getRows().stream()
                 .map(getTexto(table.getColCount() - 1)).iterator();
 
