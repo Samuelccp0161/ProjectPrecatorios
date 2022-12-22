@@ -8,7 +8,6 @@ import technology.tabula.Table;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,16 +46,22 @@ public abstract class PDF {
 
     protected Map<String, String> converterTable(Table table, int colunaCampo, int colunaValor) {
         Map<String, String> mapCampoId = criarMapID();
-        Map<String, String> mapIdValor = new HashMap<>();
+        Map<String, String> mapIdValor = tabelaDefault();
 
-        Iterator<String> campos = table.getRows().stream().map(getTexto(colunaCampo)).iterator();
-        Iterator<String> valores = table.getRows().stream().map(getTexto(colunaValor)).iterator();
+        Iterator<String> campos  = table.getRows().stream()
+                .map(getTexto(colunaCampo, "[. ]"))
+                .map(String::toLowerCase)
+                .iterator();
+
+        Iterator<String> valores = table.getRows().stream()
+                .map(getTexto(colunaValor, "[. -]"))
+                .iterator();
 
         while (campos.hasNext() && valores.hasNext()) {
             String campo = campos.next();
             String valor = valores.next();
 
-            valor = (valor.equals("")) ? "0,00" : valor;
+            if (valor.isEmpty()) continue;
 
             for (String key : mapCampoId.keySet())
                 if (campo.contains(key)) {
@@ -68,8 +73,8 @@ public abstract class PDF {
         return mapIdValor;
     }
 
-    protected static Function<List<RectangularTextContainer>, String> getTexto(int i) {
-        return r -> stripAndRemove(r.get(i).getText(), "[. %-]");
+    protected static Function<List<RectangularTextContainer>, String> getTexto(int col, String removePattern) {
+        return r -> stripAndRemove(r.get(col).getText(), removePattern);
     }
 
     @SuppressWarnings("unused")
@@ -89,6 +94,8 @@ public abstract class PDF {
     abstract public Map<String, String> getTabela() throws IOException;
 
     abstract protected Map<String, String> criarMapID();
+
+    abstract protected Map<String, String> tabelaDefault();
 
     public abstract boolean isValido();
 }

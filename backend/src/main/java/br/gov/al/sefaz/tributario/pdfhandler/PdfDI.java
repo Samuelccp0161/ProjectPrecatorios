@@ -1,6 +1,9 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
 import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
+import br.gov.al.sefaz.tributario.pdfhandler.util.Position;
+import br.gov.al.sefaz.tributario.pdfhandler.util.StringSearcher;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import technology.tabula.Table;
 import technology.tabula.extractors.BasicExtractionAlgorithm;
 
@@ -8,38 +11,57 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 //TODO: eliminar a duplicação com PdfDMI
 public class PdfDI extends PDF{
-    private final Pagina areaTabela;
     protected PdfDI(File file) throws IOException {
         super(file);
-        this.areaTabela = pagina.getAreaRelativa(39, 0, 68, 100);
     }
 
-    private Table extrairTable() {
+    private Pagina getAreaTabela() throws IOException {
+        try (PDDocument document = PDDocument.load(this.path.toFile())) {
+            StringSearcher searcher = new StringSearcher();
+
+            Position topPos = searcher.search(document, "Valores").get(0);
+            Position bottomPos = searcher.search(document, "Tributos").get(0);
+
+            float top = topPos.getY() - topPos.getHeight() * 2;
+            float bottom = bottomPos.getY() + bottomPos.getHeight() - bottomPos.getHeight() * 2;
+
+            return pagina.getArea(top, 0, bottom, pagina.width());
+        }
+    }
+
+    private Table extrairTable(Pagina areaTabela) {
         BasicExtractionAlgorithm ea = new BasicExtractionAlgorithm();
         return ea.extract(areaTabela.getPage()).get(0);
     }
 
-    @Override public Map<String, String> getTabela() {
-        Table table = extrairTable();
-        Map<String, String> tabela = converterTable(table, 0, table.getColCount() - 1);
-        tabela.put("numDI", numeroDI());
-        tabela.put("dataDMI", dataAtual());
-        return tabela;
+    @Override public Map<String, String> getTabela() throws IOException {
+        Table table = extrairTable(getAreaTabela());
+        return converterTable(table, 0, table.getColCount() - 1);
     }
 
     @Override protected Map<String, String> criarMapID() {
         Map<String, String> map = new HashMap<>();
 
-        map.put("Frete" , "valFrete");
-        map.put("Seguro" , "valSeguro");
-        map.put("VMLE" , "valVMLE");
+        map.put("frete" , "valFrete");
+        map.put("seguro" , "valSeguro");
+        map.put("vmle" , "valVMLE");
+
+        return map;
+    }
+
+    @Override protected Map<String, String> tabelaDefault() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put("valSeguro", "0,00");
+        map.put( "valFrete", "0,00");
+        map.put(  "valVMLE", "0,00");
+
+        map.put("numDI", getNumeroDI());
+        map.put("dataDMI", dataAtual());
 
         return map;
     }
@@ -52,27 +74,29 @@ public class PdfDI extends PDF{
             return false;
         }
     }
-    public String numeroDI() {
-        String cabecalho;
+    public String getNumeroDI() {
         try {
-            cabecalho = pagina.getCabecalho().toUpperCase();
+            String cabecalho = pagina.getCabecalho().toUpperCase();
+
+            Optional<String> linhaDeclaracao = cabecalho.lines()
+                    .filter(str -> str.contains("DECLARAÇÃO:"))
+                    .findFirst()
+                    .map(str -> str.replaceAll("[/-]", ""));
+            
+            if (linhaDeclaracao.isEmpty()) return "";
+
+            String[] words = linhaDeclaracao.get().split(" ");
+            
+            return Arrays.stream(words).skip(1).findFirst().orElse("");
         } catch (IOException e) {
             return "";
         }
-        String line = cabecalho.lines()
-                .filter(str -> str.contains("DECLARAÇÃO:"))
-                .findFirst().orElse("")
-                .replaceAll("[/-]", "");
-
-        return Arrays.stream(line.split(" ")).skip(1).findFirst().orElse("");
     }
     public String dataAtual(){
         LocalDate date = LocalDate.now();
 
         DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
-        String dataFormatada = formatterData.format(date);
 
-        return dataFormatada;
+        return formatterData.format(date);
     }
-
 }

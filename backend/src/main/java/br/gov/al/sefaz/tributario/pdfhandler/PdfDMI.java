@@ -16,14 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 public class PdfDMI extends PDF {
-    private Pagina areaTabelaDireita;
-    private Pagina areaTabelaEsquerda;
-
     protected PdfDMI(File file) throws IOException {
         super(file);
     }
 
-    private void setAreaTabelaDireita() throws IOException {
+    private Pagina getAreaTabelaDireita() throws IOException {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
@@ -36,11 +33,11 @@ public class PdfDMI extends PDF {
             float bottom = bottomPos.getY() + bottomPos.getHeight();
             float left = leftPos.getX() - leftPos.getCharWidth() ;
 
-            this.areaTabelaDireita = pagina.getArea(top, left, bottom, pagina.width());
+            return pagina.getArea(top, left, bottom, pagina.width());
         }
     }
 
-    private void setAreaTabelaEsquerda() throws IOException {
+    private Pagina getAreaTabelaEsquerda() throws IOException {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
@@ -52,59 +49,55 @@ public class PdfDMI extends PDF {
             float bottom = bottomPos.getY() - bottomPos.getHeight() * 2;
             float right = rightPos.getX() - rightPos.getCharWidth() * 2 ;
 
-            this.areaTabelaEsquerda = pagina.getArea(top, 0, bottom, right);
+            return pagina.getArea(top, 0, bottom, right);
         }
     }
 
     public Map<String, String> getTabela() throws IOException {
-        setAreaTabelaDireita();
-        setAreaTabelaEsquerda();
+        BasicExtractionAlgorithm bea = new BasicExtractionAlgorithm();
+        Table table = bea.extract(getAreaTabelaDireita().getPage()).get(0);
 
-        Map<String, String> dados = extrairDados();
-        dados.put("valCapatazia", "0,00");
+        Map<String, String> dados;
+        dados = converterTable(table, getColCampo(table), table.getColCount() - 1);
+
+        Pagina areaEsquerda = getAreaTabelaEsquerda();
+        table = bea.extract(areaEsquerda.getPage(), areaEsquerda.detectTable()).get(0);
+
+        Iterator<String> iter = table.getRows().stream()
+                .map(getTexto(table.getColCount() - 1, "[.%]"))
+                .map(String::toLowerCase)
+                .iterator();
+
+        String cambio = encontrarValor("câmbio", iter);
+        String aliquota = encontrarValor("interestadual", iter);
+
+        if (!cambio.isEmpty()) dados.put("valMoedaEstrangeira", cambio);
+        if (!aliquota.isEmpty()) dados.put("valAliquota", aliquota);
+
         return dados;
     }
 
-    private Map<String, String> extrairDados() {
-        BasicExtractionAlgorithm bea = new BasicExtractionAlgorithm();
-//        Table table = bea.extract(areaDireita.getPage(), areaDireita.detectTable()).get(0);
-        Table table = bea.extract(areaTabelaDireita.getPage()).get(0);
+    private static String encontrarValor(String keyword, Iterator<String> iterator) {
+        String valor = "";
 
-        int rowSize = table.getColCount();
-        Map<String, String> dados =
-                converterTable(table, getColCampo(table), rowSize - 1);
-
-        table = bea.extract(areaTabelaEsquerda.getPage(), areaTabelaEsquerda.detectTable()).get(0);
-        Iterator<String> iter = table.getRows().stream()
-                .map(getTexto(table.getColCount() - 1)).iterator();
-
-        while (iter.hasNext()) {
-            String row = iter.next();
-            if (row.contains("Câmbio")) {
-                String id = "valMoedaEstrangeira";
-                String val = StrUtil.getFloats(row, ",").get(0);
-                dados.put(id, val);
+        while (iterator.hasNext()) {
+            String row = iterator.next();
+            if (row.contains(keyword)) {
+                valor = StrUtil.lastWord(row);
                 break;
             }
         }
-        while (iter.hasNext()) {
-            String row = iter.next();
-            if (row.contains("Interestadual")) {
-                String id = "valAliquota";
-                String val = StrUtil.getNumeros(row).get(0);
-                dados.put(id, val);
-                break;
-            }
-        }
-
-        return dados;
+        return valor;
     }
 
     private int getColCampo(Table tabela) {
         var row = tabela.getRows().get(0);
-        for (int i = 0; i < row.size(); i++)
-            if (row.get(i).getText().contains("BASE DE CÁLCULO"))
+        for (int i = 0; i < row.size(); i++) {
+            String text = row.get(i).getText().toUpperCase();
+
+            if (text.contains("BASE DE CÁLCULO"))
                 return i;
+        }
 
         return -1;
     }
@@ -112,12 +105,28 @@ public class PdfDMI extends PDF {
     @Override protected Map<String, String> criarMapID() {
         Map<String, String> map = new HashMap<>();
 
-        map.put("ImpostoImportação" , "valImpostoImportacao");
-        map.put(               "IPI" , "valIPI");
-        map.put(               "PIS" , "valPIS");
-        map.put(            "COFINS" , "valCOFINS");
-        map.put(      "Taxas/Multas" , "valOutrasTaxas");
-        map.put(     "ICMSp/Saída" , "valTotNotaFiscalSaida");
+        map.put("impostoimportação" , "valImpostoImportacao");
+        map.put(              "ipi" , "valIPI");
+        map.put(              "pis" , "valPIS");
+        map.put(           "cofins" , "valCOFINS");
+        map.put(     "taxas/multas" , "valOutrasTaxas");
+        map.put(      "icmsp/saída" , "valTotNotaFiscalSaida");
+
+        return map;
+    }
+
+    @Override protected Map<String, String> tabelaDefault() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put("valTotNotaFiscalSaida", "0,00");
+        map.put( "valImpostoImportacao", "0,00");
+        map.put(  "valMoedaEstrangeira", "0,00");
+        map.put(       "valOutrasTaxas", "0,00");
+        map.put(         "valCapatazia", "0,00");
+        map.put(          "valAliquota", "4"   );
+        map.put(            "valCOFINS", "0,00");
+        map.put(               "valIPI", "0,00");
+        map.put(               "valPIS", "0,00");
 
         return map;
     }
