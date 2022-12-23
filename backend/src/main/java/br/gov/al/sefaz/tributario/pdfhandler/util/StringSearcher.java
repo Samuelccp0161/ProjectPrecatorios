@@ -29,7 +29,9 @@ public class StringSearcher extends PDFTextStripper {
 
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) {
-        if (text.toLowerCase().contains(searchText)) {
+        text = text.toLowerCase();
+        if (text.contains(searchText)) {
+            System.out.println(text);
             TextPosition position = textPositions.get(0);
             float x = position.getX();
             float y = position.getY();

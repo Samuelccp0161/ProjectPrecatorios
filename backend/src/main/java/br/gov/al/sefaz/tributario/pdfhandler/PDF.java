@@ -49,7 +49,7 @@ public abstract class PDF {
         Map<String, String> mapIdValor = tabelaDefault();
 
         Iterator<String> campos  = table.getRows().stream()
-                .map(getTexto(colunaCampo, "[. ]"))
+                .map(getCampo(colunaValor, "[. ]"))
                 .map(String::toLowerCase)
                 .iterator();
 
@@ -60,7 +60,6 @@ public abstract class PDF {
         while (campos.hasNext() && valores.hasNext()) {
             String campo = campos.next();
             String valor = valores.next();
-
             if (valor.isEmpty()) continue;
 
             for (String key : mapCampoId.keySet())
@@ -73,8 +72,18 @@ public abstract class PDF {
         return mapIdValor;
     }
 
+    protected static Function<List<RectangularTextContainer>, String> getCampo(int col, String removePattern) {
+
+        return r -> {
+            StringBuilder rowText = new StringBuilder();
+            for (int i = 0; i < col; i++)
+                rowText.append(r.get(i).getText()).append(" ");
+            return stripAndRemove(rowText.toString(), removePattern);
+        };
+    }
+
     protected static Function<List<RectangularTextContainer>, String> getTexto(int col, String removePattern) {
-        return r -> stripAndRemove(r.get(col).getText(), removePattern);
+        return r ->  stripAndRemove(r.get(col).getText(), removePattern);
     }
 
     @SuppressWarnings("unused")
