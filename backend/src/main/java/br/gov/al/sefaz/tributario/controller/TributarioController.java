@@ -123,7 +123,8 @@ public class TributarioController {
 
             for (Map.Entry<String,String> pair : dados.entrySet())
                 paginaPrecatorio.preencherCampoPorID(pair.getKey(), pair.getValue());
-
+            paginaPrecatorio.zerarPorcentagemICMSrecolher();
+            paginaPrecatorio.clicarCampoNotaFiscal();
             message = "Campos preenchidos com sucesso!";
             status = HttpStatus.OK;
         }

@@ -89,9 +89,17 @@ public class PaginaPrecatorio {
         driver.findElement(By.id(id)).sendKeys(valor);
     }
 
+    public void zerarPorcentagemICMSrecolher() {
+        driver.findElement(By.id("valPorcentagemICMSRecolher")).clear();
+    }
+
+    public void clicarCampoNotaFiscal() {
+        driver.findElement(By.id("numNotaFiscal")).click();
+    }
     public void minimizar() {
         driver.manage().window().minimize();
     }
+
     public void maximizar() {
         driver.manage().window().maximize();
     }
