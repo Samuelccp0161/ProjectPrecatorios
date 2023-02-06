@@ -1,9 +1,7 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
-import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
-import br.gov.al.sefaz.tributario.pdfhandler.util.Position;
-import br.gov.al.sefaz.tributario.pdfhandler.util.StrUtil;
-import br.gov.al.sefaz.tributario.pdfhandler.util.StringSearcher;
+import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.pdfhandler.util.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import technology.tabula.Table;
 import technology.tabula.extractors.BasicExtractionAlgorithm;
@@ -11,84 +9,57 @@ import technology.tabula.extractors.BasicExtractionAlgorithm;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PdfDMI extends PDF {
+    private Area tabelaEsquerda;
+    private Area tabelaDireita;
+
     protected PdfDMI(File file) throws IOException {
         super(file);
-    }
-
-    private Pagina getAreaTabelaDireita() throws IOException {
-        try (PDDocument document = PDDocument.load(this.path.toFile())) {
-            StringSearcher searcher = new StringSearcher();
-
-            Position topPos = searcher.search(document, "BASE DE CÁLCULO").get(0);
-            List<Position> result = searcher.search(document, "R$");
-            Position bottomPos = result.get(result.size()-1);
-            Position leftPos = searcher.search(document, "Valor da Importação").get(0);
-
-            float top = topPos.getY() - topPos.getHeight() * 2;
-            float bottom = bottomPos.getY() + bottomPos.getHeight();
-            float left;
-            if (leftPos.getText().startsWith("v"))
-                left = leftPos.getX() - leftPos.getCharWidth() * 2;
-            else left = leftPos.getX() - leftPos.getCharWidth();
-
-            return pagina.getArea(top, left, bottom, pagina.width());
+        try {
+            encontrarTabelaEsquerda();
+            encontrarTabelaDireita();
+        } catch (Exception e) {
+            throw new PdfInvalidoException(Tipo.DMI, e);
         }
     }
 
-    private Pagina getAreaTabelaEsquerda() throws IOException {
-        try (PDDocument document = PDDocument.load(this.path.toFile())) {
-            StringSearcher searcher = new StringSearcher();
+    public Map<String, String> getTabela() {
+        Map<String, String> dadosTabelaDireita = extrairTabelaDireita();
+        Map<String, String> dadosTabelaEsquerda = extrairTabelaEsquerda();
 
-            Position topPos = searcher.search(document, "OUTRAS INFORMAÇÕES").get(0);
-            Position bottomPos = searcher.search(document, "Enquadramentos Legais").get(0);
-            Position rightPos = searcher.search(document, "Valor da Importação").get(0);
+        dadosTabelaDireita.putAll(dadosTabelaEsquerda);
 
-            float top = topPos.getY() - topPos.getHeight() * 2;
-            float bottom = bottomPos.getY() - bottomPos.getHeight() * 2;
-            float right;
-            if (rightPos.getText().startsWith("v"))
-                right = rightPos.getX() - rightPos.getCharWidth() * 3 ;
-            else right = rightPos.getX() - rightPos.getCharWidth() ;
-
-            return pagina.getArea(top, 0, bottom, right);
-        }
+        return dadosTabelaDireita;
     }
 
-    public Map<String, String> getTabela() throws IOException {
+    private Map<String, String> extrairTabelaDireita() {
         BasicExtractionAlgorithm bea = new BasicExtractionAlgorithm();
-        Table table = bea.extract(getAreaTabelaDireita().getPage()).get(0);
+        Table table = bea.extract(pagina.getArea(tabelaDireita).getPage()).get(0);
+        return converterTable(table);
+    }
 
-        Map<String, String> dados;
-        dados = converterTable(table, getColCampo(table), table.getColCount() - 1);
-            printTable(table);
-        Pagina areaEsquerda = getAreaTabelaEsquerda();
-        table = bea.extract(areaEsquerda.getPage(), areaEsquerda.detectTable()).get(0);
-            printTable(table);
+    private Map<String, String> extrairTabelaEsquerda() {
+        BasicExtractionAlgorithm bea = new BasicExtractionAlgorithm();
+        Pagina paginaArea = pagina.getArea(tabelaEsquerda);
+        Table table = bea.extract(paginaArea.getPage(), paginaArea.detectTable()).get(0);
 
+        return getDadosTabelaEsquerda(table);
+    }
+
+    private static Map<String, String> getDadosTabelaEsquerda(Table table) {
         Iterator<String> iter = table.getRows().stream()
                 .map(getTexto(table.getColCount() - 1, "[.%]"))
                 .map(String::toLowerCase)
                 .iterator();
 
         String cambio = encontrarValor("câmbio", iter);
-        System.out.println("cambio" + cambio);
         String aliquota = encontrarValor("interestadual", iter);
-//        aliquota = StrUtil.lastWord(aliquota);
 
+        Map<String, String> dados = new HashMap<>();
         if (!cambio.isEmpty()) dados.put("valMoedaEstrangeira", cambio);
         if (!aliquota.isEmpty()) dados.put("valAliquota", aliquota);
-
         return dados;
-    }
-
-    private String parseCambio(String cambioRow) {
-        List<String> words = Arrays.stream(cambioRow.split(" "))
-                .filter(s -> s.length() == 6).collect(Collectors.toList());
-        int len = words.size();
-        return (len > 0)? words.get(len-1) : "";
     }
 
     private static String encontrarValor(String keyword, Iterator<String> iterator) {
@@ -96,7 +67,6 @@ public class PdfDMI extends PDF {
 
         while (iterator.hasNext()) {
             String row = iterator.next();
-            System.out.println(row);
             if (row.contains(keyword)) {
                 valor = StrUtil.lastWord(row);
                 break;
@@ -105,12 +75,16 @@ public class PdfDMI extends PDF {
         return valor;
     }
 
-    private int getColCampo(Table tabela) {
+    private int encontrarColunaCampo(Table tabela) {
+        return encontrarColunaQueContem(tabela, "importação");
+    }
+
+    private static int encontrarColunaQueContem(Table tabela, String keyword) {
         for (var row : tabela.getRows()) {
             for (int i = 0; i < row.size(); i++) {
                 String text = row.get(i).getText().toLowerCase();
 
-                if (text.contains("importação"))
+                if (text.contains(keyword))
                     return i;
             }
         }
@@ -147,12 +121,46 @@ public class PdfDMI extends PDF {
         return map;
     }
 
-    @Override public boolean isValido() {
-        try {
-            String cabecalho = pagina.getCabecalho().toUpperCase();
-            return cabecalho.contains("DESEMBARAÇO DE MERCADORIAS IMPORTADAS");
-        } catch (IOException e) {
-            return false;
+    private void encontrarTabelaEsquerda() throws IOException {
+        try (PDDocument document = PDDocument.load(this.path.toFile())) {
+            StringSearcher searcher = new StringSearcher();
+
+            CharPosition topPos = searcher.search(document, "OUTRAS INFORMAÇÕES").get(0);
+            CharPosition bottomPos = searcher.search(document, "Enquadramentos Legais").get(0);
+            CharPosition rightPos = searcher.search(document, "Valor da Importação").get(0);
+
+            float bottom = bottomPos.getY() - bottomPos.getHeight() * 2;
+            float right = rightPos.getX() - rightPos.getCharWidth();
+            if (rightPos.getCharacter() == 'v') // se a numeracao do campo nao estiver presente
+                right -= rightPos.getCharWidth() * 2;
+
+            float x = 0;
+            float y = topPos.getY() - topPos.getHeight() * 2;
+
+            tabelaEsquerda = Area.withPosition(x, y).withWidth(right - x).andHeight(bottom - y);
+        }
+    }
+
+    private void encontrarTabelaDireita() throws IOException {
+        try (PDDocument document = PDDocument.load(this.path.toFile())) {
+            StringSearcher searcher = new StringSearcher();
+
+            CharPosition topPos = searcher.search(document, "BASE DE CÁLCULO").get(0);
+            List<CharPosition> result = searcher.search(document, "R$");
+            CharPosition bottomPos = result.get(result.size() - 1);
+            CharPosition leftPos = searcher.search(document, "Valor da Importação").get(0);
+
+            float x = leftPos.getX() - leftPos.getCharWidth();
+            if (leftPos.getCharacter() == 'v')
+                x -= leftPos.getCharWidth();
+
+            float y = topPos.getY() - topPos.getHeight() * 2;
+
+            float bottom = bottomPos.getY() + bottomPos.getHeight();
+
+            float right = pagina.width();
+
+            tabelaDireita = Area.withPosition(x, y).withWidth(right - x).andHeight(bottom - y);
         }
     }
 }

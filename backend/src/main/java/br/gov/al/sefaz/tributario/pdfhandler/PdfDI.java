@@ -1,7 +1,8 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
-import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
-import br.gov.al.sefaz.tributario.pdfhandler.util.Position;
+import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.pdfhandler.util.Area;
+import br.gov.al.sefaz.tributario.pdfhandler.util.CharPosition;
 import br.gov.al.sefaz.tributario.pdfhandler.util.StringSearcher;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import technology.tabula.Table;
@@ -15,32 +16,41 @@ import java.util.*;
 
 //TODO: eliminar a duplicação com PdfDMI
 public class PdfDI extends PDF{
+    private final String numeroDi;
+    private Area tabela;
     protected PdfDI(File file) throws IOException {
         super(file);
+        try {
+            this.numeroDi = getNumeroDI();
+            encontrarTabela();
+        } catch (Exception e) {
+            throw new PdfInvalidoException(Tipo.DI, e);
+        }
     }
-
-    private Pagina getAreaTabela() throws IOException {
+    private void encontrarTabela() throws IOException {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
-            Position topPos = searcher.search(document, "Valores").get(0);
-            Position bottomPos = searcher.search(document, "Tributos").get(0);
+            CharPosition topPos = searcher.search(document, "Valores").get(0);
+            CharPosition bottomPos = searcher.search(document, "Tributos").get(0);
 
-            float top = topPos.getY() - topPos.getHeight() * 2;
+            float x = 0;
+            float y = topPos.getY() - topPos.getHeight() * 2;
             float bottom = bottomPos.getY() + bottomPos.getHeight() - bottomPos.getHeight() * 2;
+            float right = pagina.width();
 
-            return pagina.getArea(top, 0, bottom, pagina.width());
+            tabela = Area.withPosition(x, y).withWidth(right).andHeight(bottom - y);
         }
     }
 
-    private Table extrairTable(Pagina areaTabela) {
+    private Table extrairTable() {
         BasicExtractionAlgorithm ea = new BasicExtractionAlgorithm();
-        return ea.extract(areaTabela.getPage()).get(0);
+        return ea.extract(pagina.getArea(tabela).getPage()).get(0);
     }
 
     @Override public Map<String, String> getTabela() throws IOException {
-        Table table = extrairTable(getAreaTabela());
-        return converterTable(table, 0, table.getColCount() - 1);
+        Table table = extrairTable();
+        return converterTable(table);
     }
 
     @Override protected Map<String, String> criarMapID() {
@@ -60,38 +70,29 @@ public class PdfDI extends PDF{
         map.put( "valFrete", "0,00");
         map.put(  "valVMLE", "0,00");
 
-        map.put("numDI", getNumeroDI());
+        map.put("numDI", numeroDi);
         map.put("dataDMI", dataAtual());
 
         return map;
     }
+    public String getNumeroDI() throws IOException {
+        String cabecalho = pagina.getCabecalho().toUpperCase();
+        String linhaDeclaracao = getLinhaDeclaracao(cabecalho);
 
-    @Override public boolean isValido() {
-        try {
-            String cabecalho = pagina.getCabecalho().toUpperCase();
-            return cabecalho.contains("EXTRATO DA DECLARAÇÃO DE IMPORTAÇÃO");
-        } catch (IOException e) {
-            return false;
-        }
+        String[] words = linhaDeclaracao.split(" ");
+
+        if (words.length < 2) return "";
+        return words[1];
     }
-    public String getNumeroDI() {
-        try {
-            String cabecalho = pagina.getCabecalho().toUpperCase();
 
-            Optional<String> linhaDeclaracao = cabecalho.lines()
-                    .filter(str -> str.contains("DECLARAÇÃO:"))
-                    .findFirst()
-                    .map(str -> str.replaceAll("[/-]", ""));
-            
-            if (linhaDeclaracao.isEmpty()) return "";
-
-            String[] words = linhaDeclaracao.get().split(" ");
-            
-            return Arrays.stream(words).skip(1).findFirst().orElse("");
-        } catch (IOException e) {
-            return "";
-        }
+    private static String getLinhaDeclaracao(String cabecalho) {
+        return cabecalho.lines()
+                .filter(str -> str.contains("DECLARAÇÃO:"))
+                .findFirst()
+                .map(str -> str.replaceAll("[/-]", ""))
+                .orElse("");
     }
+
     public String dataAtual(){
         LocalDate date = LocalDate.now();
 

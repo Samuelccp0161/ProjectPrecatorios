@@ -44,18 +44,12 @@ public abstract class PDF {
         throw new PdfInvalidoException("Tipo de pdf invalido!");
     }
 
-    protected Map<String, String> converterTable(Table table, int colunaCampo, int colunaValor) {
+    protected Map<String, String> converterTable(Table table) {
         Map<String, String> mapCampoId = criarMapID();
         Map<String, String> mapIdValor = tabelaDefault();
 
-        Iterator<String> campos  = table.getRows().stream()
-                .map(getCampo(colunaValor, "[. ]"))
-                .map(String::toLowerCase)
-                .iterator();
-
-        Iterator<String> valores = table.getRows().stream()
-                .map(getTexto(colunaValor, "[. -]"))
-                .iterator();
+        Iterator<String> campos  = getCamposFrom(table);
+        Iterator<String> valores = getValoresFrom(table);
 
         while (campos.hasNext() && valores.hasNext()) {
             String campo = campos.next();
@@ -72,14 +66,29 @@ public abstract class PDF {
         return mapIdValor;
     }
 
-    protected static Function<List<RectangularTextContainer>, String> getCampo(int col, String removePattern) {
+    private static Iterator<String> getValoresFrom(Table table) {
+        return table.getRows().stream()
+                .map(getTexto(table.getColCount() - 1, "[. -]"))
+                .iterator();
+    }
 
-        return r -> {
-            StringBuilder rowText = new StringBuilder();
-            for (int i = 0; i < col; i++)
-                rowText.append(r.get(i).getText()).append(" ");
-            return stripAndRemove(rowText.toString(), removePattern);
-        };
+    private static Iterator<String> getCamposFrom(Table table) {
+        return table.getRows().stream()
+                .map(getCampo(table.getColCount(), "[. ]"))
+                .map(String::toLowerCase)
+                .iterator();
+    }
+
+    protected static Function<List<RectangularTextContainer>, String>
+        getCampo(int nColumns, String removePattern)
+    {
+            return r -> {
+                StringBuilder rowText = new StringBuilder();
+                for (int i = 0; i < nColumns; i++)
+                    rowText.append(r.get(i).getText())
+                            .append(" ");
+                return stripAndRemove(rowText.toString(), removePattern);
+            };
     }
 
     protected static Function<List<RectangularTextContainer>, String> getTexto(int col, String removePattern) {
@@ -105,6 +114,4 @@ public abstract class PDF {
     abstract protected Map<String, String> criarMapID();
 
     abstract protected Map<String, String> tabelaDefault();
-
-    public abstract boolean isValido();
 }

@@ -1,5 +1,7 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
+import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.pdfhandler.util.Area;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PdfDMITest {
     @Test
@@ -361,22 +364,11 @@ public class PdfDMITest {
         assertThat(dmiTabela).containsOnly(valoresEsperados);
     }
 
-
-
-
-    @Test
-    public void validarDMIComArquivoValido() throws IOException {
-        final File fileDMI1 = new File("src/test/resources/pdfs/DMI_1.pdf");
-
-        PDF dmi = PDF.dmi(fileDMI1);
-        assertThat(dmi.isValido()).isTrue();
-    }
-
     @Test
     public void validarDMIComArquivoInvalido() throws IOException {
         final File DMINaoValido = new File("src/test/resources/pdfs/DI_1.pdf");
 
-        PDF dmi = PDF.dmi(DMINaoValido);
-        assertThat(dmi.isValido()).isFalse();
+        assertThatThrownBy(() -> PDF.dmi(DMINaoValido)).isInstanceOf(PdfInvalidoException.class)
+                .hasMessageContaining("O Arquivo enviado não é um 'DMI' válido");
     }
 }

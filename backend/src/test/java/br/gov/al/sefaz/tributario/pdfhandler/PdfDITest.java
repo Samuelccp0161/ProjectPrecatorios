@@ -1,5 +1,6 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
+import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PdfDITest {
     static String data;
@@ -280,19 +282,12 @@ public class PdfDITest {
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
 
-
-    @Test
-    public void validarDIComArquivoValido() throws IOException {
-        final File fileDI1 = new File("src/test/resources/pdfs/DI_1.pdf");
-
-        PDF di = PDF.di(fileDI1);
-        assertThat(di.isValido()).isTrue();
-    }
     @Test
     public void validarDIComArquivoInvalido() throws IOException {
         final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
 
-        PDF di = PDF.di(DINaoValido);
-        assertThat(di.isValido()).isFalse();
+        assertThatThrownBy(() -> PDF.di(DINaoValido))
+                .isInstanceOf(PdfInvalidoException.class)
+                .hasMessageContaining("O Arquivo enviado não é um 'DI' válido");
     }
 }

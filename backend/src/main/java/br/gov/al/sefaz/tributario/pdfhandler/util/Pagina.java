@@ -79,4 +79,13 @@ public class Pagina {
     public float width() {
         return page.width;
     }
+
+    public Pagina getArea(Area area) {
+        return getArea(
+                area.getY(),
+                area.getX(),
+                area.getY() + area.getHeight(),
+                area.getX() + area.getWidth()
+                );
+    }
 }

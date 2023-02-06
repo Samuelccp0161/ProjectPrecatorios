@@ -28,39 +28,40 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
     }
 
-    @Override public void save(MultipartFile file, PDF.Tipo tipo) {
+    @Override public void save(MultipartFile receivedFile, PDF.Tipo tipo) {
         final String filename = (tipo == PDF.Tipo.DMI) ? filenameDmi : filenameDi;
 
         Path filepath = this.root.resolve(filename);
         File pdf = filepath.toFile();
 
+        deleteFileIfExists(pdf);
+
+        tryToCopyFile(receivedFile, filepath);
+        validateSavedFile(pdf, tipo);
+    }
+
+    private static void deleteFileIfExists(File pdf) {
         if (pdf.exists())
             pdf.delete();
+    }
 
+    private static void tryToCopyFile(MultipartFile file, Path newfilePath) {
         try {
-            Files.copy(file.getInputStream(), filepath);
+            Files.copy(file.getInputStream(), newfilePath);
         }
         catch (Exception e) {
-            if (pdf.exists())
-                pdf.delete();
-
+            deleteFileIfExists(newfilePath.toFile());
             throw new RuntimeException("Não foi possível salvar o Arquivo. Erro: " + e.getMessage());
-        }
-
-        try {
-            validatePdf(pdf, tipo);
-        } catch (PdfInvalidoException e) {
-            pdf.delete();
-            throw e;
         }
     }
 
-    private void validatePdf(File file, PDF.Tipo tipo) {
+    private static void validateSavedFile(File file, PDF.Tipo tipo) {
         try {
-            if (PDF.from(file, tipo).isValido()) return;
-        } catch (Exception ignore) {}
-
-        throw new PdfInvalidoException(tipo);
+            PDF.from(file, tipo);
+        } catch (Exception e) {
+            file.delete();
+            throw new PdfInvalidoException(tipo, e);
+        }
     }
 
     @Override public PDF loadDi() throws IOException {

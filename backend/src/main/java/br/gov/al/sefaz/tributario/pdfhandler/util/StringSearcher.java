@@ -12,7 +12,7 @@ import java.util.List;
 
 public class StringSearcher extends PDFTextStripper {
     private String searchText;
-    private final List<Position> searchResult = new ArrayList<>();
+    private final List<CharPosition> searchResult = new ArrayList<>();
 
     public StringSearcher() throws IOException {
         setSortByPosition(true);
@@ -20,7 +20,7 @@ public class StringSearcher extends PDFTextStripper {
         setEndPage(1);
     }
 
-    public List<Position> search(PDDocument document, String text) throws IOException {
+    public List<CharPosition> search(PDDocument document, String text) throws IOException {
         searchResult.clear();
         this.searchText = text.toLowerCase();
         writeText(document, new OutputStreamWriter(new ByteArrayOutputStream()));
@@ -30,14 +30,16 @@ public class StringSearcher extends PDFTextStripper {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) {
         text = text.toLowerCase();
+
         if (text.contains(searchText)) {
-            System.out.println(text);
-            TextPosition position = textPositions.get(0);
-            float x = position.getX();
-            float y = position.getY();
-            float height = position.getHeightDir();
-            float width = position.getWidth();
-            searchResult.add(new Position(x, y, height, width, text));
+            TextPosition firstChar = textPositions.get(0);
+            float x = firstChar.getX();
+            float y = firstChar.getY();
+            float width = firstChar.getWidth();
+            float height = firstChar.getHeightDir();
+
+            Area charArea = Area.withPosition(x, y).withWidth(width).andHeight(height);
+            searchResult.add(new CharPosition(charArea, text.charAt(0)));
         }
     }
 }
