@@ -3,9 +3,10 @@ package br.gov.al.sefaz.tributario.controller;
 import br.gov.al.sefaz.tributario.message.ResponseMessage;
 import br.gov.al.sefaz.tributario.pdfhandler.PDF;
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
-import br.gov.al.sefaz.tributario.selenium.PaginaPrecatorio;
-import br.gov.al.sefaz.tributario.service.FileStorageService;
+import br.gov.al.sefaz.tributario.services.PrecatorioService;
+import br.gov.al.sefaz.tributario.services.PdfService;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,35 +15,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController @RequestMapping("/api")
 public class TributarioController {
-    final FileStorageService storageService;
+    final PdfService pdfService;
+    final PrecatorioService precatorio;
 
-    TributarioController(FileStorageService storageService) {
-        this.storageService = storageService;
+    @Autowired
+    TributarioController(PdfService pdfService, PrecatorioService precatorio) {
+        this.pdfService = pdfService;
+        this.precatorio = precatorio;
         WebDriverManager.chromedriver().setup();
     }
-
-    private PaginaPrecatorio paginaPrecatorio;
 
     @PostMapping("/login")
     public ResponseEntity<ResponseMessage> login(
             @RequestParam("usuario") String usuario,
             @RequestParam("senha") String senha
     ) {
-        if (paginaPrecatorio == null)
-            paginaPrecatorio = PaginaPrecatorio.criar();
-
-        paginaPrecatorio.abrir();
-        paginaPrecatorio.logar(usuario, senha);
+        precatorio.logar(usuario, senha);
 
         String message = "Usuário ou senha inválidos!";
         HttpStatus status =  HttpStatus.UNAUTHORIZED;
 
-        if (paginaPrecatorio.isLogado()) {
+        if (precatorio.isLogado()) {
             message = "Usuário logado com sucesso!";
             status = HttpStatus.OK;
         }
@@ -55,13 +50,13 @@ public class TributarioController {
             @RequestParam("conta-grafica") String contaGrafica
     ) {
         String message = "Conta gráfica inválida!";
-        HttpStatus status = HttpStatus.EXPECTATION_FAILED;
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        if (paginaPrecatorio == null || !paginaPrecatorio.isLogado())
+        if (!precatorio.isLogado())
             message = "Usuário não está logado!";
         else {
-            paginaPrecatorio.irParaContaGrafica(contaGrafica);
-            if (paginaPrecatorio.isEmContaGrafica()) {
+            precatorio.irParaContaGrafica(contaGrafica);
+            if (precatorio.isEmContaGrafica()) {
                 message = "Entrada da conta gráfica '"+ contaGrafica +"' bem sucedida!";
                 status = HttpStatus.OK;
             }
@@ -80,8 +75,8 @@ public class TributarioController {
 
         try {
             switch (tipo) {
-                case "dmi": storageService.save(file, PDF.Tipo.DMI); break;
-                case "di":  storageService.save(file, PDF.Tipo.DI);  break;
+                case "dmi": pdfService.save(file, PDF.Tipo.DMI); break;
+                case "di":  pdfService.save(file, PDF.Tipo.DI);  break;
                 default:
                     return ResponseEntity.status(status)
                             .body(new ResponseMessage(message));
@@ -103,28 +98,21 @@ public class TributarioController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<ResponseMessage> preencherCampos() {
-        String message = "Conta gráfica não informada!";
-        HttpStatus status = HttpStatus.EXPECTATION_FAILED;
+    public ResponseEntity<ResponseMessage> submeter() {
+        String message;
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        if (paginaPrecatorio == null || !paginaPrecatorio.isEmContaGrafica())
-            return ResponseEntity.status(status).body(new ResponseMessage(message));
+        if (!precatorio.isLogado())
+            return ResponseEntity.status(status).body(new ResponseMessage("Usuário não está logado!"));
+        if (!precatorio.isEmContaGrafica())
+            return ResponseEntity.status(status).body(new ResponseMessage("Conta gráfica não informada!"));
 
         try {
-            PDF di = storageService.loadDi();
-            PDF dmi = storageService.loadDmi();
+            var dados = pdfService.getDadosParaPreencher();
 
-            Map<String, String> dados = new HashMap<>();
-            dados.putAll(di.getTabela());
-            dados.putAll(dmi.getTabela());
+            precatorio.focarJanela();
+            precatorio.preencherCampos(dados);
 
-            paginaPrecatorio.minimizar();
-            paginaPrecatorio.maximizar();
-
-            for (Map.Entry<String,String> pair : dados.entrySet())
-                paginaPrecatorio.preencherCampoPorID(pair.getKey(), pair.getValue());
-            paginaPrecatorio.zerarPorcentagemICMSrecolher();
-            paginaPrecatorio.clicarCampoNotaFiscal();
             message = "Campos preenchidos com sucesso!";
             status = HttpStatus.OK;
         }

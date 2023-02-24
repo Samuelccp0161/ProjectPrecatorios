@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.tributario;
 
-import br.gov.al.sefaz.tributario.service.FileStorageService;
+import br.gov.al.sefaz.tributario.services.PdfService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +14,7 @@ public class TributarioImportacaoApiApplication {
 	}
 
 	@Bean
-	CommandLineRunner initStorage(FileStorageService storageService) {
+	CommandLineRunner initStorage(PdfService storageService) {
 		return args -> {
 			storageService.deleteAll();
     		storageService.init();

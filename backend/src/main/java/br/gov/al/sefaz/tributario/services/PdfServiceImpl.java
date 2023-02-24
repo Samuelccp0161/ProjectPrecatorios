@@ -1,4 +1,4 @@
-package br.gov.al.sefaz.tributario.service;
+package br.gov.al.sefaz.tributario.services;
 
 import br.gov.al.sefaz.tributario.pdfhandler.PDF;
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
@@ -11,9 +11,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 @Service
-public class FileStorageServiceImpl implements FileStorageService {
+public class PdfServiceImpl implements PdfService {
     private final String filenameDi = "di.pdf";
     private final String filenameDmi = "dmi.pdf";
 
@@ -69,6 +70,13 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
     @Override public PDF loadDmi() throws IOException {
         return PDF.dmi(root.resolve(filenameDmi).toFile());
+    }
+
+    @Override
+    public Map<String, String> getDadosParaPreencher() throws IOException {
+        var dados = loadDi().getTabela();
+        dados.putAll(loadDmi().getTabela());
+        return dados;
     }
 
     @Override public void deleteAll() {
