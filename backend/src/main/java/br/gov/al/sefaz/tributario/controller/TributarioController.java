@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController @RequestMapping("/api")
 public class TributarioController {
     final PdfService pdfService;
@@ -34,35 +36,19 @@ public class TributarioController {
     ) {
         precatorio.logar(usuario, senha);
 
-        String message = "Usuário ou senha inválidos!";
-        HttpStatus status =  HttpStatus.UNAUTHORIZED;
-
-        if (precatorio.isLogado()) {
-            message = "Usuário logado com sucesso!";
-            status = HttpStatus.OK;
-        }
-
-        return ResponseEntity.status(status).body(new ResponseMessage(message));
+        return ResponseEntity.ok(new ResponseMessage("Usuário logado com sucesso!"));
     }
 
     @PostMapping("/conta")
     public ResponseEntity<ResponseMessage> entrarNaContaGrafica(
             @RequestParam("conta-grafica") String contaGrafica
     ) {
-        String message = "Conta gráfica inválida!";
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        precatorio.irParaContaGrafica(contaGrafica);
 
-        if (!precatorio.isLogado())
-            message = "Usuário não está logado!";
-        else {
-            precatorio.irParaContaGrafica(contaGrafica);
-            if (precatorio.isEmContaGrafica()) {
-                message = "Entrada da conta gráfica '"+ contaGrafica +"' bem sucedida!";
-                status = HttpStatus.OK;
-            }
-        }
+        var message =
+                new ResponseMessage("Entrada da conta gráfica '"+ contaGrafica +"' bem sucedida!");
 
-        return ResponseEntity.status(status).body(new ResponseMessage(message));
+        return ResponseEntity.ok().body(message);
     }
 
     @PostMapping("/upload")
@@ -98,28 +84,12 @@ public class TributarioController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<ResponseMessage> submeter() {
-        String message;
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+    public ResponseEntity<ResponseMessage> submeter() throws IOException {
+        var dados = pdfService.getDadosParaPreencher();
 
-        if (!precatorio.isLogado())
-            return ResponseEntity.status(status).body(new ResponseMessage("Usuário não está logado!"));
-        if (!precatorio.isEmContaGrafica())
-            return ResponseEntity.status(status).body(new ResponseMessage("Conta gráfica não informada!"));
+        precatorio.focarJanela();
+        precatorio.preencherCampos(dados);
 
-        try {
-            var dados = pdfService.getDadosParaPreencher();
-
-            precatorio.focarJanela();
-            precatorio.preencherCampos(dados);
-
-            message = "Campos preenchidos com sucesso!";
-            status = HttpStatus.OK;
-        }
-        catch (Exception e) {
-            message = "Não foi possível preencher os campos! Erro: " + e.getMessage();
-        }
-
-        return ResponseEntity.status(status).body(new ResponseMessage(message));
+        return ResponseEntity.ok().body(new ResponseMessage("Campos preenchidos com sucesso!"));
     }
 }
