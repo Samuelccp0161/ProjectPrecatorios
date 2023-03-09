@@ -20,6 +20,22 @@ export class UploadService {
     );
   }
 
+  uploadDi(form: FormData): Observable<Message> {
+    return this.http.post<Message>(this.apiUpload + "/di", form).pipe(
+      catchError((err) => {
+        return of(err.error);
+      })
+    );
+  }
+
+  uploadDmi(form: FormData): Observable<Message> {
+    return this.http.post<Message>(this.apiUpload + "/dmi", form).pipe(
+      catchError((err) => {
+        return of(err.error);
+      })
+    );
+  }
+
   submeter(): Observable<Message> {
     return this.http.post<Message>(this.apiSubmit, {}).pipe(
       catchError((err) => {

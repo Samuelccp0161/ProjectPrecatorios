@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit {
 
     form.append('usuario', this.forms.value.usuario)
     form.append('senha', this.forms.value.senha)
-    console.log(form);
 
     this.loginService.logar(form).subscribe(
       res => {

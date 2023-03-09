@@ -70,7 +70,7 @@
 
 <!-- Templates -->
 <ng-template #dmiName>
-  <span class="file-name">{{ dmi.file?.name }}</span>
+  <span class="file-name">{{ dmi.getFilename() }}</span>
 </ng-template>
 
 <ng-template #dmiError>
@@ -78,7 +78,7 @@
 </ng-template>
 
 <ng-template #diName>
-  <span class="file-name">{{ di.file?.name }}</span>
+  <span class="file-name">{{ di.getFilename() }}</span>
 </ng-template>
 
 <ng-template #diError>

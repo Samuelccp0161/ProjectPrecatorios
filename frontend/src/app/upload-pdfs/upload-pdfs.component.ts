@@ -45,17 +45,27 @@ export class UploadPdfsComponent implements OnInit {
 
   selectFile(event: Event, pdf: PdfInputFile) {
     const target = event.target as HTMLInputElement;
-    pdf.file = target.files!.item(0);
-    pdf.wasSend = false;
-    pdf.isValid = false;
+    pdf.setFile(target.files!.item(0));
   }
 
   enviarPdfs(): void {
     if (this.di.file == null || this.dmi.file == null) return;
 
-    if (!this.dmi.wasSend) this.uploadFile(this.dmi, this.dmi.file, "dmi");
+    if (!this.dmi.wasSend) {
+      this.uploadService.uploadDmi(this.dmi.file).subscribe((res) => {
+        if (res.message != "Arquivo lido com sucesso!") {
+          this.dmi.invalidar(res.message);
+        } else this.dmi.foiEnviado();
+      })
+    }
 
-    if (!this.di.wasSend) this.uploadFile(this.di, this.di.file, "di");
+    if (!this.di.wasSend) {
+      this.uploadService.uploadDi(this.di.file).subscribe((res) => {
+        if (res.message != "Arquivo lido com sucesso!") {
+          this.di.invalidar(res.message);
+        } else this.di.foiEnviado();
+      })
+    }
   }
 
   onSubmit(): void {
@@ -65,28 +75,5 @@ export class UploadPdfsComponent implements OnInit {
         this.loading = false;
       });
     }
-  }
-
-  uploadFile(pdf: PdfInputFile, file: File, tipo: string) {
-    let form = new FormData();
-
-    form.append("file", file);
-    form.append("tipo", tipo);
-
-    this.loading = true;
-    this.uploadService.upload(form).subscribe((res) => {
-      if (res.message != "Arquivo lido com sucesso!") {
-        pdf.file = null;
-        pdf.response = res.message;
-        pdf.wasSend = false;
-        pdf.isValid = false;
-      } else {
-        pdf.isValid = true;
-        pdf.wasSend = true;
-        pdf.response = "";
-      }
-
-      this.loading = false;
-    });
   }
 }

@@ -16,7 +16,7 @@ public class TributarioImportacaoApiApplication {
 	@Bean
 	CommandLineRunner initStorage(PdfService storageService) {
 		return args -> {
-			storageService.deleteAll();
+			storageService.deleteRoot();
     		storageService.init();
 		};
 	}

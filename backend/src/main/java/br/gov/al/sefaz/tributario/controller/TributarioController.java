@@ -1,13 +1,10 @@
 package br.gov.al.sefaz.tributario.controller;
 
 import br.gov.al.sefaz.tributario.message.ResponseMessage;
-import br.gov.al.sefaz.tributario.pdfhandler.PDF;
-import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
-import br.gov.al.sefaz.tributario.services.PrecatorioService;
 import br.gov.al.sefaz.tributario.services.PdfService;
+import br.gov.al.sefaz.tributario.services.PrecatorioService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +16,14 @@ import java.io.IOException;
 
 @RestController @RequestMapping("/api")
 public class TributarioController {
-    final PdfService pdfService;
     final PrecatorioService precatorio;
+
+    final PdfService pdfService;
 
     @Autowired
     TributarioController(PdfService pdfService, PrecatorioService precatorio) {
-        this.pdfService = pdfService;
         this.precatorio = precatorio;
+        this.pdfService = pdfService;
         WebDriverManager.chromedriver().setup();
     }
 
@@ -51,41 +49,21 @@ public class TributarioController {
         return ResponseEntity.ok().body(message);
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> upload(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("tipo") String tipo)
-    {
-        String message = "Parametro 'tipo: " + tipo + "' não é válido!";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+    @PostMapping("/upload/di")
+    public ResponseEntity<ResponseMessage> uploadDi(@RequestParam("file") MultipartFile file) throws IOException {
+        pdfService.saveDiFile(file);
+        return ResponseEntity.ok(new ResponseMessage("Arquivo lido com sucesso!"));
+    }
 
-        try {
-            switch (tipo) {
-                case "dmi": pdfService.save(file, PDF.Tipo.DMI); break;
-                case "di":  pdfService.save(file, PDF.Tipo.DI);  break;
-                default:
-                    return ResponseEntity.status(status)
-                            .body(new ResponseMessage(message));
-            }
-
-            message = "Arquivo lido com sucesso!";
-            status = HttpStatus.OK;
-        }
-        catch (PdfInvalidoException e) {
-            message = e.getMessage();
-            status = HttpStatus.EXPECTATION_FAILED;
-        }
-        catch (Exception e) {
-            message = "Não foi possível fazer o upload do arquivo: " + file.getOriginalFilename() + "!";
-            status = HttpStatus.EXPECTATION_FAILED;
-        }
-
-        return ResponseEntity.status(status).body(new ResponseMessage(message));
+    @PostMapping("/upload/dmi")
+    public ResponseEntity<ResponseMessage> uploadDmi(@RequestParam("file") MultipartFile file) throws IOException {
+        pdfService.saveDmiFile(file);
+        return ResponseEntity.ok(new ResponseMessage("Arquivo lido com sucesso!"));
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<ResponseMessage> submeter() throws IOException {
-        var dados = pdfService.getDadosParaPreencher();
+    public ResponseEntity<ResponseMessage> submeter() {
+        var dados = pdfService.extrairDados();
 
         precatorio.focarJanela();
         precatorio.preencherCampos(dados);

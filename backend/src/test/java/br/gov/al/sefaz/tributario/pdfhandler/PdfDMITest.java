@@ -1,8 +1,6 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
-import br.gov.al.sefaz.tributario.pdfhandler.util.Area;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -223,26 +221,7 @@ public class PdfDMITest {
 
         assertThat(dmiTabela).containsOnly(valoresEsperados);
     }
-    @Test @Disabled //FOI TROCADO O "." PELA ",".
-    public void lerDMI11() throws IOException {
-        final File fileDMI11 = new File("src/test/resources/pdfs/DMI_11.pdf");
 
-        StrPair[] valoresEsperados = {
-                new StrPair(  "valMoedaEstrangeira", "5,3204"),
-                new StrPair("valTotNotaFiscalSaida", "325377,60"),
-                new StrPair( "valImpostoImportacao", "31226,47"),
-                new StrPair(               "valIPI", "0,00"),
-                new StrPair(               "valPIS", "4098,47"),
-                new StrPair(            "valCOFINS", "18833,47"),
-                new StrPair(       "valOutrasTaxas", "2567,53"),
-                new StrPair(         "valCapatazia", "0,00"),
-                new StrPair(          "valAliquota", "4"),
-        };
-        PDF dmi = PDF.dmi(fileDMI11);
-        Map<String, String> dmiTabela = dmi.getTabela();
-
-        assertThat(dmiTabela).containsOnly(valoresEsperados);
-    }
     @Test
     public void lerDMI12() throws IOException {
         final File fileDMI12 = new File("src/test/resources/pdfs/DMI_12.pdf");
@@ -323,26 +302,7 @@ public class PdfDMITest {
 
         assertThat(dmiTabela).containsOnly(valoresEsperados);
     }
-    @Test @Disabled("NOME DO VALOR DA TAXA ALTERADO")
-    public void lerDMI16() throws IOException {
-        final File fileDMI16 = new File("src/test/resources/pdfs/DMI_16.pdf");
 
-        StrPair[] valoresEsperados = {
-                new StrPair(  "valMoedaEstrangeira", "5,2091"),
-                new StrPair("valTotNotaFiscalSaida", "285624,64"),
-                new StrPair( "valImpostoImportacao", "24858,99"),
-                new StrPair(               "valIPI", "0,00"),
-                new StrPair(               "valPIS", "4078,43"),
-                new StrPair(            "valCOFINS", "20683,46"),
-                new StrPair(       "valOutrasTaxas", "2259,96"),
-                new StrPair(         "valCapatazia", "0,00"),
-                new StrPair(          "valAliquota", "4"),
-        };
-        PDF dmi = PDF.dmi(fileDMI16);
-        Map<String, String> dmiTabela = dmi.getTabela();
-
-        assertThat(dmiTabela).containsOnly(valoresEsperados);
-    }
     @Test
     public void lerDMI17() throws IOException {
         final File fileDMI17 = new File("src/test/resources/pdfs/DMI_17.pdf");
@@ -365,7 +325,7 @@ public class PdfDMITest {
     }
 
     @Test
-    public void validarDMIComArquivoInvalido() throws IOException {
+    public void validarDMIComArquivoInvalido() {
         final File DMINaoValido = new File("src/test/resources/pdfs/DI_1.pdf");
 
         assertThatThrownBy(() -> PDF.dmi(DMINaoValido)).isInstanceOf(PdfInvalidoException.class)

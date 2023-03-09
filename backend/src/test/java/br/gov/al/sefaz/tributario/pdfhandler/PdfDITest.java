@@ -2,7 +2,6 @@ package br.gov.al.sefaz.tributario.pdfhandler;
 
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
@@ -169,22 +168,7 @@ public class PdfDITest {
 
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
-    @Test @Disabled ("PDF É UMA IMAGEM")
-    public void lerDI10() throws IOException {
-        final File fileDI10 = new File("src/test/resources/pdfs/DI_10.pdf");
 
-        StrPair[] valoresEsperados = {
-                new StrPair("valFrete", "8000,00"),
-                new StrPair("valSeguro", "0,00"),
-                new StrPair("valVMLE", "401627,60"),
-                new StrPair("numDI", "2224923030"),
-                new StrPair("dataDMI", data),
-        };
-        PDF di = PDF.di(fileDI10);
-        Map<String, String> diTabela = di.getTabela();
-
-        assertThat(diTabela).containsOnly(valoresEsperados);
-    }
     @Test
     public void lerDI11() throws IOException {
         final File fileDI11 = new File("src/test/resources/pdfs/DI_11.pdf");
@@ -217,22 +201,7 @@ public class PdfDITest {
 
         assertThat(diTabela).containsOnly(valoresEsperados);
     }
-    @Test @Disabled ("PDF EM FORMATO DE IMAGEM")
-    public void lerDI13() throws IOException {
-        final File fileDI13 = new File("src/test/resources/pdfs/DI_13.pdf");
 
-        StrPair[] valoresEsperados = {
-                new StrPair("valFrete", "2900,00"),
-                new StrPair("valSeguro", "0,00"),
-                new StrPair("valVMLE", "22190,81"),
-                new StrPair("numDI", "2225006228"),
-                new StrPair("dataDMI", data),
-        };
-        PDF di = PDF.di(fileDI13);
-        Map<String, String> diTabela = di.getTabela();
-
-        assertThat(diTabela).containsOnly(valoresEsperados);
-    }
     @Test
     public void lerDI14() throws IOException {
         final File fileDI14 = new File("src/test/resources/pdfs/DI_14.pdf");
@@ -283,7 +252,7 @@ public class PdfDITest {
     }
 
     @Test
-    public void validarDIComArquivoInvalido() throws IOException {
+    public void validarDIComArquivoInvalido() {
         final File DINaoValido = new File("src/test/resources/pdfs/DMI_1.pdf");
 
         assertThatThrownBy(() -> PDF.di(DINaoValido))

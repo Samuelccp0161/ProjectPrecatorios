@@ -22,9 +22,13 @@ public abstract class PDF {
 
     public enum Tipo {DI, DMI}
 
-    PDF(File file) throws IOException {
-        this.pagina = Pagina.umDoArquivo(file);
-        this.path = file.toPath();
+    PDF(File file) {
+        try {
+            this.pagina = Pagina.umDoArquivo(file);
+            this.path = file.toPath();
+        } catch (IOException e) {
+            throw new PdfInvalidoException("Arquivo inválido!", e);
+        }
     }
 
     public static PDF dmi(File file) throws IOException {
@@ -32,6 +36,10 @@ public abstract class PDF {
     }
 
     public static PDF di(File file) throws IOException {
+        return new PdfDI(file);
+    }
+
+    public PDF createDi(File file) throws IOException {
         return new PdfDI(file);
     }
 
