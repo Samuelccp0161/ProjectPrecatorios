@@ -3,34 +3,54 @@ package br.gov.al.sefaz.tributario.selenium;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
 
 public class PaginaPrecatorio {
-    private final ChromeOptions options;
     private WebDriver driver;
+    private FabricaDriver fabricaDriver;
 
-    private PaginaPrecatorio(ChromeOptions options) {
-        this.driver = criarDriver(options);
-        this.options = options;
+    private PaginaPrecatorio(FabricaDriver fabricaDriver) {
+        this.driver = fabricaDriver.criarDriver();
+        this.fabricaDriver = fabricaDriver;
         minimizar();
     }
 
-    private WebDriver criarDriver(ChromeOptions options) {
-        return new ChromeDriver(options);
-    }
-
-    private static ChromeOptions criarOptions() {
+    private static ChromeOptions criarChromeOptions() {
         ChromeOptions options = new ChromeOptions();
+
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-dev-shm-usage");
         return options;
     }
 
-    public static PaginaPrecatorio criar() {
-        return new PaginaPrecatorio(criarOptions());
+    private static EdgeOptions criarEdgeOptions() {
+        EdgeOptions options = new EdgeOptions();
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-dev-shm-usage");
+        return options;
     }
 
-    public static PaginaPrecatorio criarHeadless() {
-        return new PaginaPrecatorio(criarOptions().setHeadless(true));
+    public static PaginaPrecatorio criarComChrome() {
+        FabricaDriver fabrica = FabricaDriver.chrome(criarChromeOptions());
+        return new PaginaPrecatorio(fabrica);
+    }
+
+    public static PaginaPrecatorio criarHeadlessComChrome() {
+        FabricaDriver fabrica = FabricaDriver.chromeHeadless(criarChromeOptions());
+
+        return new PaginaPrecatorio(fabrica);
+    }
+
+    public static PaginaPrecatorio criarComEdge() {
+        FabricaDriver fabrica = FabricaDriver.edge(criarEdgeOptions());
+
+        return new PaginaPrecatorio(fabrica);
+    }
+
+    public static PaginaPrecatorio criarHeadlessComEdge() {
+        FabricaDriver fabrica = FabricaDriver.edgeHeadless(criarEdgeOptions());
+
+        return new PaginaPrecatorio(fabrica);
     }
 
     public void abrir(){
@@ -38,7 +58,7 @@ public class PaginaPrecatorio {
             driver.get("https://precatorios.sefaz.al.gov.br/");
             driver.switchTo().frame(driver.findElement(By.name("principal")));
         } catch (Exception e) {
-            this.driver = criarDriver(options);
+            this.driver = fabricaDriver.criarDriver();
             minimizar();
             driver.get("https://precatorios.sefaz.al.gov.br/");
             driver.switchTo().frame(driver.findElement(By.name("principal")));

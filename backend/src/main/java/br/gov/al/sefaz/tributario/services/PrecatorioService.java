@@ -4,7 +4,6 @@ import br.gov.al.sefaz.tributario.exception.ContaGraficaInvalidaException;
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.selenium.FabricaPaginaPrecatorio;
 import br.gov.al.sefaz.tributario.selenium.PaginaPrecatorio;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -12,8 +11,12 @@ import java.util.Map;
 @Service
 public class PrecatorioService {
 
-    @Autowired
-    private FabricaPaginaPrecatorio fabrica;
+    private final FabricaPaginaPrecatorio fabrica;
+
+    public PrecatorioService(FabricaPaginaPrecatorio fabrica) {
+        this.fabrica = fabrica;
+    }
+
     public PaginaPrecatorio getPagina() {
         return fabrica.getPagina();
     }
