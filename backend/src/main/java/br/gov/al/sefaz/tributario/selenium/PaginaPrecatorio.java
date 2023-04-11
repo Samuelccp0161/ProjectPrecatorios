@@ -1,13 +1,10 @@
 package br.gov.al.sefaz.tributario.selenium;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
 
 public class PaginaPrecatorio {
     private WebDriver driver;
-    private FabricaDriver fabricaDriver;
+    private final FabricaDriver fabricaDriver;
 
     private PaginaPrecatorio(FabricaDriver fabricaDriver) {
         this.driver = fabricaDriver.criarDriver();
@@ -15,40 +12,25 @@ public class PaginaPrecatorio {
         minimizar();
     }
 
-    private static ChromeOptions criarChromeOptions() {
-        ChromeOptions options = new ChromeOptions();
-
-        options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
-        return options;
-    }
-
-    private static EdgeOptions criarEdgeOptions() {
-        EdgeOptions options = new EdgeOptions();
-        options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
-        return options;
-    }
-
     public static PaginaPrecatorio criarComChrome() {
-        FabricaDriver fabrica = FabricaDriver.chrome(criarChromeOptions());
+        FabricaDriver fabrica = FabricaDriver.chrome();
         return new PaginaPrecatorio(fabrica);
     }
 
     public static PaginaPrecatorio criarHeadlessComChrome() {
-        FabricaDriver fabrica = FabricaDriver.chromeHeadless(criarChromeOptions());
+        FabricaDriver fabrica = FabricaDriver.chromeHeadless();
 
         return new PaginaPrecatorio(fabrica);
     }
 
     public static PaginaPrecatorio criarComEdge() {
-        FabricaDriver fabrica = FabricaDriver.edge(criarEdgeOptions());
+        FabricaDriver fabrica = FabricaDriver.edge();
 
         return new PaginaPrecatorio(fabrica);
     }
 
     public static PaginaPrecatorio criarHeadlessComEdge() {
-        FabricaDriver fabrica = FabricaDriver.edgeHeadless(criarEdgeOptions());
+        FabricaDriver fabrica = FabricaDriver.edgeHeadless();
 
         return new PaginaPrecatorio(fabrica);
     }
