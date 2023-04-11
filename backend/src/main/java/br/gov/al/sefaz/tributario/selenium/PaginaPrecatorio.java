@@ -53,6 +53,18 @@ public class PaginaPrecatorio {
         return new PaginaPrecatorio(fabrica);
     }
 
+    public static PaginaPrecatorio criarComFirefox() {
+        FabricaDriver fabrica = FabricaDriver.firefox();
+        return new PaginaPrecatorio(fabrica);
+
+    }
+
+    public static PaginaPrecatorio criarHeadlessComFirefox() {
+        FabricaDriver fabrica = FabricaDriver.firefoxHeadless();
+
+        return new PaginaPrecatorio(fabrica);
+    }
+
     public void abrir(){
         try {
             driver.get("https://precatorios.sefaz.al.gov.br/");

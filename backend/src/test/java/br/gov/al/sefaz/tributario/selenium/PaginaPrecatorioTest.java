@@ -17,8 +17,8 @@ public class PaginaPrecatorioTest {
     static void beforeAll() {
 //        WebDriverManager.chromedriver().setup();
 //        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComChrome();
-        WebDriverManager.edgedriver().setup();
-        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComEdge();
+        WebDriverManager.firefoxdriver().setup();
+        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComFirefox();
     }
 
     @AfterAll

@@ -5,7 +5,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -36,14 +38,30 @@ public class FabricaDriver {
         return edge(options.setHeadless(true));
     }
 
+    public static FabricaDriver firefox() {
+        return new FabricaDriver(Navegador.Firefox, null, null);
+    }
+
+    public static FabricaDriver firefoxHeadless() {
+        return firefox();
+    }
+
     public WebDriver criarDriver() {
         if (navegador == Navegador.Edge) {
             return criarEdgeDriver(edgeOptions);
+        } else if (navegador == Navegador.Firefox) {
+            return criarFirefoxDriver();
         }
         return criarChromeDriver(chromeOptions);
     }
 
-    public enum Navegador {Chrome, Edge}
+    private static WebDriver criarFirefoxDriver() {
+        FirefoxDriver driver = new FirefoxDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+        return driver;
+    }
+
+    public enum Navegador {Chrome, Edge, Firefox}
 
     private static WebDriver criarChromeDriver(ChromeOptions options) {
         return new ChromeDriver(options);

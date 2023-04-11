@@ -24,7 +24,6 @@ public class TributarioController {
     TributarioController(PdfService pdfService, PrecatorioService precatorio) {
         this.precatorio = precatorio;
         this.pdfService = pdfService;
-        WebDriverManager.edgedriver().setup();
     }
 
     @PostMapping("/login")
