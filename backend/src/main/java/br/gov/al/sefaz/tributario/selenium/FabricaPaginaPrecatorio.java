@@ -7,7 +7,7 @@ public class FabricaPaginaPrecatorio {
     private PaginaPrecatorio pagina;
     public PaginaPrecatorio getPagina() {
         if (pagina == null) {
-            pagina = PaginaPrecatorio.criarComFirefox();
+            pagina = PaginaPrecatorio.criarComChrome();
             pagina.abrir();
         }
 

@@ -64,10 +64,4 @@ public class PrecatorioService {
         pagina.zerarPorcentagemICMSrecolher();
         pagina.clicarCampoNotaFiscal();
     }
-
-    public void focarJanela() {
-        var pagina = getPagina();
-        pagina.minimizar();
-        pagina.maximizar();
-    }
 }

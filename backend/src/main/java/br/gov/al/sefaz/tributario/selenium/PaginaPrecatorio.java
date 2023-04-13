@@ -9,7 +9,7 @@ public class PaginaPrecatorio {
     private PaginaPrecatorio(FabricaDriver fabricaDriver) {
         this.driver = fabricaDriver.criarDriver();
         this.fabricaDriver = fabricaDriver;
-        minimizar();
+//        minimizar();
     }
 
     public static PaginaPrecatorio criarComChrome() {
@@ -53,7 +53,7 @@ public class PaginaPrecatorio {
             driver.switchTo().frame(driver.findElement(By.name("principal")));
         } catch (Exception e) {
             this.driver = fabricaDriver.criarDriver();
-            minimizar();
+//            minimizar();
             driver.get("https://precatorios.sefaz.al.gov.br/");
             driver.switchTo().frame(driver.findElement(By.name("principal")));
         }
@@ -110,11 +110,11 @@ public class PaginaPrecatorio {
     public void clicarCampoNotaFiscal() {
         driver.findElement(By.id("numNotaFiscal")).click();
     }
-    public void minimizar() {
-        driver.manage().window().minimize();
-    }
-
-    public void maximizar() {
-        driver.manage().window().maximize();
-    }
+//    public void minimizar() {
+//        driver.manage().window().minimize();
+//    }
+//
+//    public void maximizar() {
+//        driver.manage().window().maximize();
+//    }
 }

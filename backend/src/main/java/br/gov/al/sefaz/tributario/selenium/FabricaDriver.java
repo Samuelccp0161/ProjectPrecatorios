@@ -1,13 +1,14 @@
 package br.gov.al.sefaz.tributario.selenium;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 
 public class FabricaDriver {
@@ -54,13 +55,23 @@ public class FabricaDriver {
     public enum Navegador {Chrome, Edge, Firefox}
 
     private WebDriver criarFirefoxDriver() {
-        FirefoxDriver driver = new FirefoxDriver(options.firefox());
+        WebDriver driver;
+        try {
+            driver = new RemoteWebDriver(new URL("http://localhost:4444"), new FirefoxOptions());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         return driver;
     }
 
     private WebDriver criarChromeDriver() {
-        return new ChromeDriver(options.chrome());
+        try {
+            Thread.sleep(1500);
+            return new RemoteWebDriver(new URL("http://localhost:4444"), options.chrome());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public WebDriver criarEdgeDriver() {
@@ -85,6 +96,7 @@ public class FabricaDriver {
         private ChromeOptions chrome() {
             var options = new ChromeOptions();
             options.addArguments("--ignore-certificate-errors");
+            options.addArguments("--start-maximized");
             options.addArguments("--disable-dev-shm-usage");
             if (headless) options.addArguments("--headless=new");
             return options;

@@ -4,8 +4,8 @@ import br.gov.al.sefaz.tributario.exception.ContaGraficaInvalidaException;
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.exception.handler.CustomExceptionHandler;
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
-import br.gov.al.sefaz.tributario.services.PrecatorioService;
 import br.gov.al.sefaz.tributario.services.PdfService;
+import br.gov.al.sefaz.tributario.services.PrecatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
@@ -52,7 +51,6 @@ class TributarioControllerTest {
 
     //Todo: concertar os testes das responses do login. o content não esta em utf-8
 
-    //Todo: Testes para o /api/upload
     @Nested
     public class AoTentarLogar {
 

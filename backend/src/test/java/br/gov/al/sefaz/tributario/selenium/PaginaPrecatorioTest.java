@@ -1,6 +1,5 @@
 package br.gov.al.sefaz.tributario.selenium;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -16,9 +15,9 @@ public class PaginaPrecatorioTest {
     @BeforeAll
     static void beforeAll() {
 //        WebDriverManager.chromedriver().setup();
-//        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComChrome();
-        WebDriverManager.firefoxdriver().setup();
-        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComFirefox();
+        paginaPrecatorio = PaginaPrecatorio.criarComFirefox();
+//        WebDriverManager.firefoxdriver().setup();
+//        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComFirefox();
     }
 
     @AfterAll
