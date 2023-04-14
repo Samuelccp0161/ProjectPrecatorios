@@ -18,11 +18,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PdfServiceTest {
-    PdfService pdfService;
+    PdfServiceImpl pdfService;
 
     @BeforeEach
     void setUp() {
-        pdfService = new PdfService();
+        pdfService = new PdfServiceImpl();
         pdfService.deleteRoot();
         pdfService.init();
     }
@@ -39,7 +39,7 @@ class PdfServiceTest {
     }
 
     @Test
-    void deveriaCopiarUmArquivoParaPastaRoot() throws IOException {
+    void deveriaCopiarUmArquivoParaPastaRoot() {
         final String filename = "File.txt";
         final String fileContent = "conteúdo do arquivo";
 
@@ -68,7 +68,7 @@ class PdfServiceTest {
 
         @Test
         void deveriaReceberESalvarOArquivoDi() throws IOException {
-            File savedDi = pdfService.getRootDir().resolve(PdfService.FILENAME_DI).toFile();
+            File savedDi = pdfService.getRootDir().resolve(PdfServiceImpl.FILENAME_DI).toFile();
 
             try (FileInputStream fileStream = new FileInputStream(diValido)) {
                 MockMultipartFile mockFile = new MockMultipartFile("di", fileStream);
@@ -104,7 +104,7 @@ class PdfServiceTest {
                 MockMultipartFile mockFile = new MockMultipartFile("di", fileStream);
 
                 pdfService.saveDiFile(mockFile);
-                assertThat(pdfService.extrairDi()).containsExactlyInAnyOrderEntriesOf(dados);
+                assertThat(pdfService.getDadosDI()).containsExactlyInAnyOrderEntriesOf(dados);
             }
         }
 
@@ -126,7 +126,7 @@ class PdfServiceTest {
 
         @Test
         void deveriaReceberESalvarOArquivoDi() throws IOException {
-            File savedDmi = pdfService.getRootDir().resolve(PdfService.FILENAME_DMI).toFile();
+            File savedDmi = pdfService.getRootDir().resolve(PdfServiceImpl.FILENAME_DMI).toFile();
 
             try (FileInputStream fileStream = new FileInputStream(dmiValido)) {
                 MockMultipartFile mockFile = new MockMultipartFile("dmi", fileStream);
@@ -166,7 +166,7 @@ class PdfServiceTest {
                 MockMultipartFile mockFile = new MockMultipartFile("dmi", fileStream);
 
                 pdfService.saveDmiFile(mockFile);
-                assertThat(pdfService.extrairDmi()).containsExactlyInAnyOrderEntriesOf(dados);
+                assertThat(pdfService.getDadosDMI()).containsExactlyInAnyOrderEntriesOf(dados);
             }
         }
     }

@@ -14,10 +14,7 @@ public class PaginaPrecatorioTest {
 
     @BeforeAll
     static void beforeAll() {
-//        WebDriverManager.chromedriver().setup();
-        paginaPrecatorio = PaginaPrecatorio.criarComFirefox();
-//        WebDriverManager.firefoxdriver().setup();
-//        paginaPrecatorio = PaginaPrecatorio.criarHeadlessComFirefox();
+        paginaPrecatorio = new PaginaPrecatorio();
     }
 
     @AfterAll
