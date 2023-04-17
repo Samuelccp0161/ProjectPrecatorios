@@ -14,7 +14,7 @@ public class PdfDMI extends PDF {
     private Area tabelaEsquerda;
     private Area tabelaDireita;
 
-    protected PdfDMI(File file) throws IOException {
+    protected PdfDMI(File file) {
         super(file);
         try {
             encontrarTabelaEsquerda();
@@ -73,22 +73,6 @@ public class PdfDMI extends PDF {
             }
         }
         return valor;
-    }
-
-    private int encontrarColunaCampo(Table tabela) {
-        return encontrarColunaQueContem(tabela, "importação");
-    }
-
-    private static int encontrarColunaQueContem(Table tabela, String keyword) {
-        for (var row : tabela.getRows()) {
-            for (int i = 0; i < row.size(); i++) {
-                String text = row.get(i).getText().toLowerCase();
-
-                if (text.contains(keyword))
-                    return i;
-            }
-        }
-        return -1;
     }
 
     @Override protected Map<String, String> criarMapID() {

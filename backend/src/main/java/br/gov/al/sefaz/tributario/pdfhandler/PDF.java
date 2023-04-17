@@ -1,7 +1,8 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
-import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+
 import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
+import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
 import technology.tabula.RectangularTextContainer;
 import technology.tabula.Table;
 
@@ -31,25 +32,12 @@ public abstract class PDF {
         }
     }
 
-    public static PDF dmi(File file) throws IOException {
+    public static PDF dmi(File file) {
         return new PdfDMI(file);
     }
 
-    public static PDF di(File file) throws IOException {
+    public static PDF di(File file) {
         return new PdfDI(file);
-    }
-
-    public PDF createDi(File file) throws IOException {
-        return new PdfDI(file);
-    }
-
-    public static PDF from(File file, Tipo tipo) throws IOException{
-        switch (tipo) {
-            case DI:  return di(file);
-            case DMI: return dmi(file);
-        }
-
-        throw new PdfInvalidoException("Tipo de pdf invalido!");
     }
 
     protected Map<String, String> converterTable(Table table) {
@@ -117,7 +105,7 @@ public abstract class PDF {
         System.out.println("#----------------------#");
     }
 
-    abstract public Map<String, String> getTabela() throws IOException;
+    abstract public Map<String, String> getTabela();
 
     abstract protected Map<String, String> criarMapID();
 

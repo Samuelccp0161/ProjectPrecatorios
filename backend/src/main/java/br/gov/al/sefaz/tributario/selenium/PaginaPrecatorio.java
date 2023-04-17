@@ -6,45 +6,9 @@ public class PaginaPrecatorio {
     private WebDriver driver;
     private final FabricaDriver fabricaDriver;
 
-    private PaginaPrecatorio(FabricaDriver fabricaDriver) {
+    public PaginaPrecatorio() {
+        this.fabricaDriver = new FabricaDriver();
         this.driver = fabricaDriver.criarDriver();
-        this.fabricaDriver = fabricaDriver;
-        minimizar();
-    }
-
-    public static PaginaPrecatorio criarComChrome() {
-        FabricaDriver fabrica = FabricaDriver.chrome();
-        return new PaginaPrecatorio(fabrica);
-    }
-
-    public static PaginaPrecatorio criarHeadlessComChrome() {
-        FabricaDriver fabrica = FabricaDriver.chromeHeadless();
-
-        return new PaginaPrecatorio(fabrica);
-    }
-
-    public static PaginaPrecatorio criarComEdge() {
-        FabricaDriver fabrica = FabricaDriver.edge();
-
-        return new PaginaPrecatorio(fabrica);
-    }
-
-    public static PaginaPrecatorio criarHeadlessComEdge() {
-        FabricaDriver fabrica = FabricaDriver.edgeHeadless();
-
-        return new PaginaPrecatorio(fabrica);
-    }
-
-    public static PaginaPrecatorio criarComFirefox() {
-        FabricaDriver fabrica = FabricaDriver.firefox();
-        return new PaginaPrecatorio(fabrica);
-
-    }
-
-    public static PaginaPrecatorio criarHeadlessComFirefox() {
-        FabricaDriver fabrica = FabricaDriver.firefoxHeadless();
-
-        return new PaginaPrecatorio(fabrica);
     }
 
     public void abrir(){
@@ -53,7 +17,6 @@ public class PaginaPrecatorio {
             driver.switchTo().frame(driver.findElement(By.name("principal")));
         } catch (Exception e) {
             this.driver = fabricaDriver.criarDriver();
-            minimizar();
             driver.get("https://precatorios.sefaz.al.gov.br/");
             driver.switchTo().frame(driver.findElement(By.name("principal")));
         }
@@ -109,12 +72,5 @@ public class PaginaPrecatorio {
 
     public void clicarCampoNotaFiscal() {
         driver.findElement(By.id("numNotaFiscal")).click();
-    }
-    public void minimizar() {
-        driver.manage().window().minimize();
-    }
-
-    public void maximizar() {
-        driver.manage().window().maximize();
     }
 }

@@ -5,9 +5,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class FabricaPaginaPrecatorio {
     private PaginaPrecatorio pagina;
-    public PaginaPrecatorio getPagina() {
+    public PaginaPrecatorio obterPagina() {
         if (pagina == null) {
-            pagina = PaginaPrecatorio.criarComFirefox();
+            pagina = new PaginaPrecatorio();
             pagina.abrir();
         }
 

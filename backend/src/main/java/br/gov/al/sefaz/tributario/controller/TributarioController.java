@@ -3,8 +3,6 @@ package br.gov.al.sefaz.tributario.controller;
 import br.gov.al.sefaz.tributario.message.ResponseMessage;
 import br.gov.al.sefaz.tributario.services.PdfService;
 import br.gov.al.sefaz.tributario.services.PrecatorioService;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +15,8 @@ import java.io.IOException;
 @RestController @RequestMapping("/api")
 public class TributarioController {
     final PrecatorioService precatorio;
-
     final PdfService pdfService;
 
-    @Autowired
     TributarioController(PdfService pdfService, PrecatorioService precatorio) {
         this.precatorio = precatorio;
         this.pdfService = pdfService;
@@ -64,7 +60,6 @@ public class TributarioController {
     public ResponseEntity<ResponseMessage> submeter() {
         var dados = pdfService.extrairDados();
 
-        precatorio.focarJanela();
         precatorio.preencherCampos(dados);
 
         return ResponseEntity.ok().body(new ResponseMessage("Campos preenchidos com sucesso!"));

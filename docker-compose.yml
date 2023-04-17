@@ -1,0 +1,13 @@
+services:
+  tributario:
+    build: .
+#    ports:
+#      - 8080:8080
+    network_mode: host
+
+  selenium:
+    image: selenium/standalone-chrome:4.8.3-20230404
+    shm_size: 2gb
+    ports:
+      - 4444:4444
+      - 7900:7900

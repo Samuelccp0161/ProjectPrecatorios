@@ -18,7 +18,8 @@ import java.util.*;
 public class PdfDI extends PDF{
     private final String numeroDi;
     private Area tabela;
-    protected PdfDI(File file) throws IOException {
+
+    protected PdfDI(File file) {
         super(file);
         try {
             this.numeroDi = getNumeroDI();
@@ -27,6 +28,7 @@ public class PdfDI extends PDF{
             throw new PdfInvalidoException(Tipo.DI, e);
         }
     }
+
     private void encontrarTabela() throws IOException {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
@@ -48,7 +50,7 @@ public class PdfDI extends PDF{
         return ea.extract(pagina.getArea(tabela).getPage()).get(0);
     }
 
-    @Override public Map<String, String> getTabela() throws IOException {
+    @Override public Map<String, String> getTabela() {
         Table table = extrairTable();
         return converterTable(table);
     }

@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class PrecatorioServiceTest {
     @Mock
@@ -27,12 +28,12 @@ class PrecatorioServiceTest {
     private PaginaPrecatorio mockPagina;
 
     @InjectMocks
-    private PrecatorioService precatorio;
+    private PrecatorioServiceImpl precatorio;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        given(mockFabrica.getPagina()).willReturn(mockPagina);
+        given(mockFabrica.obterPagina()).willReturn(mockPagina);
     }
 
     @Nested
@@ -82,7 +83,7 @@ class PrecatorioServiceTest {
                     .isInstanceOf(ContaGraficaInvalidaException.class)
                     .hasMessageContaining("Conta gráfica inválida!");
 
-            then(mockPagina).should(times(1)).irParaContaGrafica(contaGrafica);
+            verify(mockPagina).irParaContaGrafica(contaGrafica);
         }
 
         @Test
@@ -90,8 +91,9 @@ class PrecatorioServiceTest {
             given(mockPagina.isLogado()).willReturn(true);
             given(mockPagina.isEmContaGrafica()).willReturn(true);
 
-            assertDoesNotThrow(() -> precatorio.irParaContaGrafica(contaGrafica));
-            then(mockPagina).should(times(1)).irParaContaGrafica(contaGrafica);
+            precatorio.irParaContaGrafica(contaGrafica);
+
+            verify(mockPagina).irParaContaGrafica(contaGrafica);
 
         }
     }
