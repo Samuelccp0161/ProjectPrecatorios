@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class TributarioImportacaoApiApplication {
+public class StartUp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TributarioImportacaoApiApplication.class, args);
+		SpringApplication.run(StartUp.class, args);
 	}
 
 	@Bean

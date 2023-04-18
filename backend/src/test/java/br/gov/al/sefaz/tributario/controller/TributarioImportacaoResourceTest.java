@@ -5,10 +5,8 @@ import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.exception.handler.CustomExceptionHandler;
 import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
 import br.gov.al.sefaz.tributario.services.PdfService;
-import br.gov.al.sefaz.tributario.services.PrecatorioService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import br.gov.al.sefaz.tributario.services.TributarioImportacaoService;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,106 +21,69 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class TributarioControllerTest {
+class TributarioImportacaoResourceTest {
     protected MockMvc mvc;
 
     @Mock
-    protected PrecatorioService precatorioService;
+    protected TributarioImportacaoService tributarioService;
 
     @Mock
     private PdfService pdfService;
 
     @InjectMocks
-    private TributarioController tributarioController;
+    private TributarioImportacaoResource tributarioImportacaoResource;
 
     @BeforeEach
     void setUp() {
-        mvc = MockMvcBuilders.standaloneSetup(tributarioController)
+        mvc = MockMvcBuilders.standaloneSetup(tributarioImportacaoResource)
                 .setControllerAdvice(new CustomExceptionHandler())
                 .build();
     }
 
-    //Todo: concertar os testes das responses do login. o content não esta em utf-8
-
-    @Nested
-    public class AoTentarLogar {
-
-        private static final String usuario = "abc";
-        private static final String senha = "def";
-
-        private static final String params = "?usuario=" + usuario + "&senha=" + senha;
-
-        @Test
-        public void comLoginValido() throws Exception {
-            mvc.perform(post("/api/login" + params))
-                    .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(containsString("UsuÃ¡rio logado com sucesso!")));
-
-            verify(precatorioService).logar(usuario, senha);
-        }
-
-        @Test
-        public void comLoginInvalido() throws Exception {
-            var loginException = new LoginException("Usuário ou senha inválidos!");
-            doThrow(loginException).when(precatorioService).logar(usuario, senha);
-
-            mvc.perform(post("/api/login" + params))
-                    .andDo(print())
-                    .andExpect(status().isUnauthorized())
-                    .andExpect(content().string(containsString("UsuÃ¡rio ou senha invÃ¡lidos!")));
-
-            verify(precatorioService).logar(usuario, senha);
-        }
-    }
-
-    @Nested
-    public class AoTentarEntrarNaContaGrafica {
+    @Nested @DisplayName("Ao inserir Conta Grafica")
+    public class AoInserirContaGrafica {
         String contaGrafica = "12";
 
-        @Test
+        @Test @DisplayName("sem estar logado")
         void semEstarLogado() throws Exception {
             var loginException = new LoginException("Usuário não está logado!");
-            doThrow(loginException).when(precatorioService).irParaContaGrafica(contaGrafica);
+            doThrow(loginException).when(tributarioService).irParaContaGrafica(contaGrafica);
 
-            mvc.perform(post("/api/conta?conta-grafica=" + contaGrafica))
+            mvc.perform(get("/api/tributario-importacao/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().string(containsString("UsuÃ¡rio nÃ£o estÃ¡ logado!")));
 
-            verify(precatorioService).irParaContaGrafica(contaGrafica);
+            verify(tributarioService).irParaContaGrafica(contaGrafica);
         }
 
-        @Test
+        @Test @DisplayName("com conta invalida")
         void comContaInvalida() throws Exception {
             var contaGraficaException = new ContaGraficaInvalidaException("Conta gráfica inválida!");
-            doThrow(contaGraficaException).when(precatorioService).irParaContaGrafica(contaGrafica);
+            doThrow(contaGraficaException).when(tributarioService).irParaContaGrafica(contaGrafica);
 
-            mvc.perform(post("/api/conta?conta-grafica=" + contaGrafica))
+            mvc.perform(get("/api/tributario-importacao/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(content().string(
                             containsString("Conta grÃ¡fica invÃ¡lida!")));
 
-            verify(precatorioService).irParaContaGrafica(contaGrafica);
+            verify(tributarioService).irParaContaGrafica(contaGrafica);
         }
 
-        @Test
+        @Test @DisplayName("com conta valida")
         void comContaValida() throws Exception {
-            mvc.perform(post("/api/conta?conta-grafica=" + contaGrafica))
+            mvc.perform(get("/api/tributario-importacao/" + contaGrafica))
                     .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(
-                            containsString("Entrada da conta grÃ¡fica '"+ contaGrafica +"' bem sucedida!")));
+                    .andExpect(status().isOk());
 
-            verify(precatorioService).irParaContaGrafica(contaGrafica);
+            verify(tributarioService).irParaContaGrafica(contaGrafica);
         }
     }
 
@@ -133,7 +94,7 @@ class TributarioControllerTest {
 
         @Test
         void comDiValido() throws Exception {
-            mvc.perform(multipart("/api/upload/di").file(mockFile))
+            mvc.perform(multipart("/api/tributario-importacao/upload/di").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("Arquivo lido com sucesso!")))
@@ -146,7 +107,7 @@ class TributarioControllerTest {
             var pdfException = new PdfInvalidoException("O Arquivo enviado não é um 'DI' válido");
             doThrow(pdfException).when(pdfService).saveDiFile(mockFile);
 
-            mvc.perform(multipart("/api/upload/di").file(mockFile))
+            mvc.perform(multipart("/api/tributario-importacao/upload/di").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isInternalServerError())
                     .andExpect(content().string(containsString("O Arquivo enviado nÃ£o Ã© um 'DI' vÃ¡lido")))
@@ -157,7 +118,7 @@ class TributarioControllerTest {
 
         @Test
         void comDmiValido() throws Exception {
-            mvc.perform(multipart("/api/upload/dmi").file(mockFile))
+            mvc.perform(multipart("/api/tributario-importacao/upload/dmi").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("Arquivo lido com sucesso!")))
@@ -170,7 +131,7 @@ class TributarioControllerTest {
             var pdfException = new PdfInvalidoException("O Arquivo enviado não é um 'DMI' válido");
             doThrow(pdfException).when(pdfService).saveDmiFile(mockFile);
 
-            mvc.perform(multipart("/api/upload/dmi").file(mockFile))
+            mvc.perform(multipart("/api/tributario-importacao/upload/dmi").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isInternalServerError())
                     .andExpect(content().string(containsString("O Arquivo enviado nÃ£o Ã© um 'DMI' vÃ¡lido")))
@@ -192,9 +153,9 @@ class TributarioControllerTest {
         @Test
         void semEstarLogado() throws Exception {
             var loginException = new LoginException("Usuário não está logado!");
-            doThrow(loginException).when(precatorioService).preencherCampos(dados);
+            doThrow(loginException).when(tributarioService).preencherDados(dados);
 
-            mvc.perform(post("/api/submit"))
+            mvc.perform(post("/api/tributario-importacao/submit"))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().string(containsString("UsuÃ¡rio nÃ£o estÃ¡ logado!")));
@@ -204,9 +165,9 @@ class TributarioControllerTest {
         void semDarEntradaNaContaGrafica() throws Exception {
             var contaGraficaException =
                     new ContaGraficaInvalidaException("Conta gráfica não informada!");
-            doThrow(contaGraficaException).when(precatorioService).preencherCampos(dados);
+            doThrow(contaGraficaException).when(tributarioService).preencherDados(dados);
 
-            mvc.perform(post("/api/submit"))
+            mvc.perform(post("/api/tributario-importacao/submit"))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(content().string(containsString("Conta grÃ¡fica nÃ£o informada!")));
@@ -214,12 +175,12 @@ class TributarioControllerTest {
 
         @Test
         void comSucesso() throws Exception {
-            mvc.perform(post("/api/submit"))
+            mvc.perform(post("/api/tributario-importacao/submit"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("Campos preenchidos com sucesso!")));
 
-            verify(precatorioService).preencherCampos(dados);
+            verify(tributarioService).preencherDados(dados);
         }
     }
 }
