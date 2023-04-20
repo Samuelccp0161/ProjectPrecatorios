@@ -7,8 +7,8 @@ import { catchError, of, Observable } from "rxjs";
   providedIn: "root",
 })
 export class UploadService {
-  apiUpload = "/api/upload";
-  apiSubmit = "/api/submit";
+  apiUpload = "/api/tributario-importacao/upload";
+  apiSubmit = "/api/tributario-importacao/submit";
   
   constructor(private http: HttpClient) {}
 

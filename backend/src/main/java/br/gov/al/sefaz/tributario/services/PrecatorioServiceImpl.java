@@ -1,7 +1,7 @@
 package br.gov.al.sefaz.tributario.services;
 
 import br.gov.al.sefaz.tributario.exception.LoginException;
-import br.gov.al.sefaz.tributario.selenium.Driver;
+import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
 import org.openqa.selenium.By;
 import org.springframework.stereotype.Service;
 
@@ -20,20 +20,20 @@ public class PrecatorioServiceImpl implements PrecatorioService {
     }
 
     private void preencherLogin(String usuario, String senha) {
-        Driver.obterDriver().findElement(By.id("txtLogin")).sendKeys(usuario);
-        Driver.obterDriver().findElement(By.id("txtSenha")).sendKeys(senha);
-        Driver.obterDriver().findElement(By.id("btnEntrar")).click();
+        FabricaDriver.obterDriver().findElement(By.id("txtLogin")).sendKeys(usuario);
+        FabricaDriver.obterDriver().findElement(By.id("txtSenha")).sendKeys(senha);
+        FabricaDriver.obterDriver().findElement(By.id("btnEntrar")).click();
     }
 
     private void mudarParaFramePrincipal() {
-        Driver.obterDriver().switchTo().frame("principal");
+        FabricaDriver.obterDriver().switchTo().frame("principal");
     }
 
     public void close() {
-        Driver.close();
+        FabricaDriver.close();
     }
 
     protected void abrirPagina() {
-        Driver.obterNovoDriver().get("https://precatorios.sefaz.al.gov.br/");
+        FabricaDriver.obterNovoDriver().get("https://precatorios.sefaz.al.gov.br/");
     }
 }

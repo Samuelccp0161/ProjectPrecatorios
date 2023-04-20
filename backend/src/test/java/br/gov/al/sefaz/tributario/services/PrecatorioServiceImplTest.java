@@ -1,7 +1,7 @@
 package br.gov.al.sefaz.tributario.services;
 
 import br.gov.al.sefaz.tributario.exception.LoginException;
-import br.gov.al.sefaz.tributario.selenium.Driver;
+import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +31,7 @@ class PrecatorioServiceImplTest {
     void deveriaIniciarNaPaginaPrecatorios() {
         precatorioService.abrirPagina();
 
-        assertThat(Driver.obterDriver().getCurrentUrl()).isEqualTo("https://precatorios.sefaz.al.gov.br/");
+        assertThat(FabricaDriver.obterDriver().getCurrentUrl()).isEqualTo("https://precatorios.sefaz.al.gov.br/");
     }
 
     @Nested
@@ -51,7 +51,7 @@ class PrecatorioServiceImplTest {
         void comCredenciaisValidas() {
             precatorioService.logar("sdcabral", "Samuka0810");
 
-            WebDriver driver = Driver.obterDriver();
+            WebDriver driver = FabricaDriver.obterDriver();
             assertDoesNotThrow(() -> driver.findElement(By.linkText("Sair")));
 
             assertThat(PrecatorioService.naoLogou()).isFalse();

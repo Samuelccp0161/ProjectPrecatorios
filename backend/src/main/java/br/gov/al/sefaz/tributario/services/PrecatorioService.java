@@ -1,17 +1,16 @@
 package br.gov.al.sefaz.tributario.services;
 
-import br.gov.al.sefaz.tributario.selenium.Driver;
+import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 
 public interface PrecatorioService {
     void logar(String usuario, String senha);
 
     static boolean naoLogou() {
         try {
-            return Driver.obterDriver().findElement(By.linkText("Sair")) == null;
+            return FabricaDriver.obterDriver().findElement(By.linkText("Sair")) == null;
         }
-        catch (NoSuchElementException ignore) {
+        catch (Exception ignore) {
             return true;
         }
     }

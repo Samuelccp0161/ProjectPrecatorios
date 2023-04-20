@@ -55,7 +55,7 @@ class TributarioImportacaoResourceTest {
             var loginException = new LoginException("Usuário não está logado!");
             doThrow(loginException).when(tributarioService).irParaContaGrafica(contaGrafica);
 
-            mvc.perform(get("/api/tributario-importacao/" + contaGrafica))
+            mvc.perform(post("/api/tributario-importacao/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().string(containsString("UsuÃ¡rio nÃ£o estÃ¡ logado!")));
@@ -68,7 +68,7 @@ class TributarioImportacaoResourceTest {
             var contaGraficaException = new ContaGraficaInvalidaException("Conta gráfica inválida!");
             doThrow(contaGraficaException).when(tributarioService).irParaContaGrafica(contaGrafica);
 
-            mvc.perform(get("/api/tributario-importacao/" + contaGrafica))
+            mvc.perform(post("/api/tributario-importacao/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(content().string(
@@ -79,7 +79,7 @@ class TributarioImportacaoResourceTest {
 
         @Test @DisplayName("com conta valida")
         void comContaValida() throws Exception {
-            mvc.perform(get("/api/tributario-importacao/" + contaGrafica))
+            mvc.perform(post("/api/tributario-importacao/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isOk());
 

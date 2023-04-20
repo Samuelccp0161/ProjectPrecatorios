@@ -2,7 +2,7 @@ package br.gov.al.sefaz.tributario.services;
 
 import br.gov.al.sefaz.tributario.exception.ContaGraficaInvalidaException;
 import br.gov.al.sefaz.tributario.exception.LoginException;
-import br.gov.al.sefaz.tributario.selenium.Driver;
+import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -51,7 +51,7 @@ class TributarioImportacaoServiceImplTest {
             public void comContaValida() {
                 pagina.irParaContaGrafica("12");
 
-                WebDriver driver = Driver.obterDriver();
+                WebDriver driver = FabricaDriver.obterDriver();
                 WebElement contaGrafica = driver.findElement(By.id("sequencialContaGrafica"));
 
                 assertThat(contaGrafica.getAttribute("value")).isEqualTo("12");
@@ -100,7 +100,7 @@ class TributarioImportacaoServiceImplTest {
 
                 pagina.preencherDados(dados);
 
-                var driver = Driver.obterDriver();
+                var driver = FabricaDriver.obterDriver();
                 for (var pair : dados.entrySet()) {
                     String id = pair.getKey();
                     var campo = driver.findElement(By.id(id));

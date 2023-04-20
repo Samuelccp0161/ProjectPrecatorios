@@ -1,7 +1,6 @@
 package br.gov.al.sefaz.tributario.selenium;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -11,22 +10,27 @@ import java.time.Duration;
 
 public class FabricaDriver {
     public static final String WEBDRIVER_REMOTE_URL = "http://localhost:4444";
+    private static WebDriver webdriver;
 
-    public WebDriver criarDriver() {
-        String ambiente = System.getProperty("ambiente.teste");
-
-        if (ambiente == null) {
-            return criarDriverRemoto();
-        }
-
-        return criarChromeDriverLocal();
+    public static WebDriver obterDriver() {
+        if (webdriver == null)
+            webdriver = criarWebdriver();
+        return webdriver;
     }
 
-    private WebDriver criarChromeDriverLocal() {
-        return new ChromeDriver(Options.chrome());
+    public static WebDriver obterNovoDriver() {
+        closeDriver();
+
+        webdriver = criarWebdriver();
+        return webdriver;
     }
 
-    private WebDriver criarDriverRemoto() {
+    private static void closeDriver() {
+        try { webdriver.quit(); }
+        catch (Exception ignore) {}
+    }
+
+    private static WebDriver criarWebdriver() {
         esperarDriverRemoto();
 
         var driver = RemoteWebDriver.builder()
@@ -45,6 +49,11 @@ public class FabricaDriver {
         try {
             Thread.sleep(1500);
         } catch (Exception ignore) {}
+    }
+
+    public static void close() {
+        closeDriver();
+        webdriver = null;
     }
 
     static class Options {

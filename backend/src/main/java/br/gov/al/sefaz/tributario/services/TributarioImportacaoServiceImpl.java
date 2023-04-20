@@ -2,7 +2,7 @@ package br.gov.al.sefaz.tributario.services;
 
 import br.gov.al.sefaz.tributario.exception.ContaGraficaInvalidaException;
 import br.gov.al.sefaz.tributario.exception.LoginException;
-import br.gov.al.sefaz.tributario.selenium.Driver;
+import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -26,19 +26,19 @@ public class TributarioImportacaoServiceImpl implements TributarioImportacaoServ
 
     private boolean naoEntrouNaContaGrafica() {
         try {
-            return Driver.obterDriver().findElement(By.linkText("Cadastrar")) == null;
+            return FabricaDriver.obterDriver().findElement(By.linkText("Cadastrar")) == null;
         } catch (NoSuchElementException ignore) {
             return true;
         }
     }
 
-    private static void preencherContaGrafica(String contaGrafica) {
-        Driver.obterDriver().findElement(By.id("contaGrafica")).sendKeys(contaGrafica, Keys.ENTER);
+    private void preencherContaGrafica(String contaGrafica) {
+        FabricaDriver.obterDriver().findElement(By.id("contaGrafica")).sendKeys(contaGrafica, Keys.ENTER);
     }
 
-    private static void irParaTributarioImportacao() {
-        Driver.obterDriver().findElement(By.id("mi_0_5")).click();
-        Driver.obterDriver().findElement(By.id("mi_0_6")).click();
+    private void irParaTributarioImportacao() {
+        FabricaDriver.obterDriver().findElement(By.id("mi_0_5")).click();
+        FabricaDriver.obterDriver().findElement(By.id("mi_0_6")).click();
     }
 
     @Override
@@ -52,11 +52,11 @@ public class TributarioImportacaoServiceImpl implements TributarioImportacaoServ
             String id = pair.getKey();
             String valor = pair.getValue();
 
-            Driver.obterDriver().findElement(By.id(id)).sendKeys(valor);
+            FabricaDriver.obterDriver().findElement(By.id(id)).sendKeys(valor);
         }
     }
 
     public void close() {
-        Driver.close();
+        FabricaDriver.close();
     }
 }
