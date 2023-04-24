@@ -1,0 +1,10 @@
+@import '/src/app/variables.scss';
+
+mat-card {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.flex-row {
+  height: 40px;
+}

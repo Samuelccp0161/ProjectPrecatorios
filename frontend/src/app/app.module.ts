@@ -7,30 +7,36 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ContaGraficaComponent } from './conta-grafica/conta-grafica.component';
-import { UploadPdfsComponent } from './upload-pdfs/upload-pdfs.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { LoginComponent } from './login/login.component';
 import { ContentHeaderComponent } from './content-header/content-header.component';
+import { PrecatorioComponent } from './precatorio/precatorio.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import { TributarioComponent } from './precatorio/tributario/tributario/tributario.component';
+import { BeneficiarioComponent } from './precatorio/beneficiario/beneficiario/beneficiario.component';
+import { UploadComponent } from './precatorio/tributario/upload/upload.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderBarComponent,
     LoginComponent,
-    ContaGraficaComponent,
-    UploadPdfsComponent,
-    ContentHeaderComponent
+    ContentHeaderComponent,
+    PrecatorioComponent,
+    TributarioComponent,
+    BeneficiarioComponent,
+    UploadComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    FormsModule,
-    AppMaterialModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        FormsModule,
+        AppMaterialModule,
+        MatTabsModule,
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

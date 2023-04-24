@@ -34,7 +34,7 @@ mat-card-content {
 
 .flex-row {
   @extend %flex;
-  
+
   flex-direction: row;
   justify-content: space-between;
   width: -moz-available;
@@ -47,7 +47,7 @@ mat-card-content {
 }
 
 .file-name {
-  @extend %response;  
+  @extend %response;
 }
 .file-error {
   @extend %response;

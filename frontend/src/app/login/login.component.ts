@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
         this.loginService.logar(usuario, senha).subscribe({
                 next: () => {
                     this.data.setLogado(true);
-                    this.router.navigateByUrl('/grafica');
+                    this.router.navigateByUrl('/precatorio');
                 },
                 error: (err) => this.errorMessage = this.parseError(err)
             }
@@ -55,6 +55,6 @@ export class LoginComponent implements OnInit {
         if (err.status == 404 || err.status == 504)
             return "Não foi possível conectar!";
 
-        return  err.error.message
+        return err.error.message;
     }
 }

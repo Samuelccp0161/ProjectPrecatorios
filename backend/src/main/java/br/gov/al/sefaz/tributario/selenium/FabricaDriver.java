@@ -66,13 +66,11 @@ public class FabricaDriver {
         }
 
         private static EdgeOptions edge() {
-            var options = new EdgeOptions();
-            return options;
+            return new EdgeOptions();
         }
 
         private static FirefoxOptions firefox() {
-            var options = new FirefoxOptions();
-            return options;
+            return new FirefoxOptions();
         }
     }
 }

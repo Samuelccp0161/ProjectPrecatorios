@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { DataService } from './../shared/services/data.service';
-import { PdfInputFile } from './model/pdf-file';
-import { UploadService } from './service/upload.service';
+import {DataService} from "../../../shared/services/data.service";
+import {Router} from "@angular/router";
+import {PdfInputFile} from "../../../shared/pdf-file";
+import {UploadService} from "./service/upload.service";
 
 @Component({
-  selector: "app-upload-pdfs",
-  templateUrl: "./upload-pdfs.component.html",
-  styleUrls: ["./upload-pdfs.component.scss"],
+  selector: 'app-upload',
+  templateUrl: './upload.component.html',
+  styleUrls: ['./upload.component.scss']
 })
-export class UploadPdfsComponent implements OnInit {
+export class UploadComponent implements OnInit {
   dmi = new PdfInputFile();
   di = new PdfInputFile();
 
@@ -19,14 +18,14 @@ export class UploadPdfsComponent implements OnInit {
   contaGrafica!: string;
 
   constructor(
-    private data: DataService,
-    private router: Router,
-    private uploadService: UploadService
+      private data: DataService,
+      private router: Router,
+      private uploadService: UploadService
   ) {}
 
   ngOnInit(): void {
     if (this.data.getContaGrafica() === "")
-      this.router.navigateByUrl("/grafica");
+      this.router.navigateByUrl("/precatorio");
 
     this.contaGrafica = this.data.getContaGrafica();
   }
