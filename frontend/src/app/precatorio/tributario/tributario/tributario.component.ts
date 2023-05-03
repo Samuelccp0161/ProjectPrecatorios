@@ -33,16 +33,21 @@ export class TributarioComponent implements OnInit {
     const conta = this.contaGrafica.value;
 
     this.tributarioService.entrar(conta).subscribe({
-      next: () => {
-        this.data.setContaGrafica(conta);
-        this.router.navigateByUrl("/precatorio/tributario-upload");
-      },
-      error: (err) => {
-        this.errorMessage = err.error.message;
-        if (this.errorMessage != 'Conta gráfica inválida!') {
-          this.router.navigateByUrl("/login");
-        }
-      },
+      next: () => this.salvarContaEIrParaUpload(conta),
+      error: (erro) => this.salvarErroOuVoltarParaLogin(erro)
     }).add(() => this.loading = false);
+  }
+
+  salvarContaEIrParaUpload(conta: string): void {
+    this.data.setContaGrafica(conta);
+    this.router.navigateByUrl("/precatorio/tributario-upload");
+  }
+
+  salvarErroOuVoltarParaLogin(erro: any): void {
+    this.errorMessage = erro.error.message;
+
+    if (this.errorMessage != 'Conta gráfica inválida!') {
+      this.router.navigateByUrl("/login");
+    }
   }
 }

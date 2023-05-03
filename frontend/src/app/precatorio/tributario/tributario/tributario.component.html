@@ -3,31 +3,22 @@
         <form (ngSubmit)="submitConta()">
             <mat-form-field appearance="outline">
                 <mat-label>Conta Gráfica</mat-label>
-                <input
-                        matInput
-                        type="text"
-                        placeholder="Conta Gráfica"
-                        id="conta-grafica"
-                        [formControl]="contaGrafica"
-                />
+                <input matInput type="text" id="conta-grafica"
+                       placeholder="Conta Gráfica" [formControl]="contaGrafica"/>
             </mat-form-field>
             <br />
 
             <div class="flex-row">
                 <div>
-                    <button
-                            mat-raised-button
-                            type="submit"
-                            color="primary"
-                            id="submit-conta"
-                            [disabled]="contaGrafica.invalid"
-                    >
+                    <button mat-raised-button type="submit" id="submit-conta"
+                            color="primary" [disabled]="contaGrafica.invalid">
                         Entrar
                     </button>
 
                     <span style="padding-left: 15px"></span>
 
-                    <button color="accent" mat-raised-button mat-icon-button routerLink="/login">
+                    <button id="btnBack" mat-raised-button mat-icon-button
+                            color="accent" routerLink="/login">
                         <mat-icon>arrow_back</mat-icon>
                     </button>
                 </div>

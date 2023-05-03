@@ -36,7 +36,7 @@ public class TributarioImportacaoResource {
 
     @PostMapping("/submit")
     public ResponseEntity<ResponseMessage> submeter() {
-        var dados = pdfService.extrairDados();
+        var dados = pdfService.extrairDadosTributario();
 
         tributarioService.preencherDados(dados);
 

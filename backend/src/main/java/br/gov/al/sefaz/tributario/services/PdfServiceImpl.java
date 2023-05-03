@@ -1,6 +1,7 @@
 package br.gov.al.sefaz.tributario.services;
 
 import br.gov.al.sefaz.tributario.pdfhandler.PDF;
+import br.gov.al.sefaz.tributario.pdfhandler.PdfBeneficiario;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,11 +15,9 @@ import java.util.Map;
 
 @Service
 public class PdfServiceImpl implements PdfService {
-    protected static final String FILENAME_DMI = "dmi.pdf";
-    protected static final String FILENAME_DI = "di.pdf";
-
     private Map<String, String> dadosDI;
     private Map<String, String> dadosDMI;
+    private Map<String, String> dadosBeneficiario;
 
     private final Path root = Paths.get(".pdfs");
 
@@ -63,11 +62,23 @@ public class PdfServiceImpl implements PdfService {
         dadosDMI = PDF.dmi(getRootDir().resolve(FILENAME_DMI).toFile()).getTabela();
     }
 
-    public Map<String, String> extrairDados() {
+    @Override
+    public void saveFileBeneficiario(MultipartFile receivedFile) {
+        saveFile(FILENAME_BENEFICIARIO, receivedFile);
+        PdfBeneficiario.validadorPdf(getRootDir().resolve(FILENAME_BENEFICIARIO).toFile());
+        dadosBeneficiario = PdfBeneficiario.extrairDados(getRootDir().resolve(FILENAME_BENEFICIARIO).toFile());
+    }
+
+    public Map<String, String> extrairDadosTributario() {
         var dados = new HashMap<>(dadosDI);
         dados.putAll(dadosDMI);
 
         return dados;
+    }
+
+    @Override
+    public Map<String, String> extrairDadosBeneficiario() {
+        return dadosBeneficiario;
     }
 
     protected Map<String, String> getDadosDI() {

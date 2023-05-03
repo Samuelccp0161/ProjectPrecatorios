@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class TributarioImportacaoResourceTest {
+    public static final String API_URL = "/api/tributario-importacao";
     protected MockMvc mvc;
 
     @Mock
@@ -55,7 +56,7 @@ class TributarioImportacaoResourceTest {
             var loginException = new LoginException("Usuário não está logado!");
             doThrow(loginException).when(tributarioService).irParaContaGrafica(contaGrafica);
 
-            mvc.perform(post("/api/tributario-importacao/" + contaGrafica))
+            mvc.perform(post(API_URL + "/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().string(containsString("UsuÃ¡rio nÃ£o estÃ¡ logado!")));
@@ -68,7 +69,7 @@ class TributarioImportacaoResourceTest {
             var contaGraficaException = new ContaGraficaInvalidaException("Conta gráfica inválida!");
             doThrow(contaGraficaException).when(tributarioService).irParaContaGrafica(contaGrafica);
 
-            mvc.perform(post("/api/tributario-importacao/" + contaGrafica))
+            mvc.perform(post(API_URL + "/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(content().string(
@@ -79,7 +80,7 @@ class TributarioImportacaoResourceTest {
 
         @Test @DisplayName("com conta valida")
         void comContaValida() throws Exception {
-            mvc.perform(post("/api/tributario-importacao/" + contaGrafica))
+            mvc.perform(post(API_URL + "/" + contaGrafica))
                     .andDo(print())
                     .andExpect(status().isOk());
 
@@ -94,7 +95,7 @@ class TributarioImportacaoResourceTest {
 
         @Test
         void comDiValido() throws Exception {
-            mvc.perform(multipart("/api/tributario-importacao/upload/di").file(mockFile))
+            mvc.perform(multipart(API_URL + "/upload/di").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("Arquivo lido com sucesso!")))
@@ -107,7 +108,7 @@ class TributarioImportacaoResourceTest {
             var pdfException = new PdfInvalidoException("O Arquivo enviado não é um 'DI' válido");
             doThrow(pdfException).when(pdfService).saveDiFile(mockFile);
 
-            mvc.perform(multipart("/api/tributario-importacao/upload/di").file(mockFile))
+            mvc.perform(multipart(API_URL + "/upload/di").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isInternalServerError())
                     .andExpect(content().string(containsString("O Arquivo enviado nÃ£o Ã© um 'DI' vÃ¡lido")))
@@ -118,7 +119,7 @@ class TributarioImportacaoResourceTest {
 
         @Test
         void comDmiValido() throws Exception {
-            mvc.perform(multipart("/api/tributario-importacao/upload/dmi").file(mockFile))
+            mvc.perform(multipart(API_URL + "/upload/dmi").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("Arquivo lido com sucesso!")))
@@ -131,7 +132,7 @@ class TributarioImportacaoResourceTest {
             var pdfException = new PdfInvalidoException("O Arquivo enviado não é um 'DMI' válido");
             doThrow(pdfException).when(pdfService).saveDmiFile(mockFile);
 
-            mvc.perform(multipart("/api/tributario-importacao/upload/dmi").file(mockFile))
+            mvc.perform(multipart(API_URL + "/upload/dmi").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isInternalServerError())
                     .andExpect(content().string(containsString("O Arquivo enviado nÃ£o Ã© um 'DMI' vÃ¡lido")))
@@ -147,7 +148,7 @@ class TributarioImportacaoResourceTest {
 
         @BeforeEach
         void setUp() {
-            given(pdfService.extrairDados()).willReturn(dados);
+            given(pdfService.extrairDadosTributario()).willReturn(dados);
         }
 
         @Test
@@ -155,7 +156,7 @@ class TributarioImportacaoResourceTest {
             var loginException = new LoginException("Usuário não está logado!");
             doThrow(loginException).when(tributarioService).preencherDados(dados);
 
-            mvc.perform(post("/api/tributario-importacao/submit"))
+            mvc.perform(post(API_URL + "/submit"))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().string(containsString("UsuÃ¡rio nÃ£o estÃ¡ logado!")));
@@ -167,7 +168,7 @@ class TributarioImportacaoResourceTest {
                     new ContaGraficaInvalidaException("Conta gráfica não informada!");
             doThrow(contaGraficaException).when(tributarioService).preencherDados(dados);
 
-            mvc.perform(post("/api/tributario-importacao/submit"))
+            mvc.perform(post(API_URL + "/submit"))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(content().string(containsString("Conta grÃ¡fica nÃ£o informada!")));
@@ -175,7 +176,7 @@ class TributarioImportacaoResourceTest {
 
         @Test
         void comSucesso() throws Exception {
-            mvc.perform(post("/api/tributario-importacao/submit"))
+            mvc.perform(post(API_URL + "/submit"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("Campos preenchidos com sucesso!")));
