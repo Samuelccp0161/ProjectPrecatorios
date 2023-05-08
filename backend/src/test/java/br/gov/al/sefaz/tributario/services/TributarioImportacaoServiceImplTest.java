@@ -94,7 +94,7 @@ class TributarioImportacaoServiceImplTest {
                         .hasMessage("Conta gráfica não informada!");
             }
 
-            @Test @DisplayName("apos dar entrar na conta deveria preencher com sucesso")
+            @Test @DisplayName("apos dar entrada na conta deveria preencher com sucesso")
             public void comSucesso() {
                 pagina.irParaContaGrafica("512");
 
@@ -107,6 +107,9 @@ class TributarioImportacaoServiceImplTest {
 
                     assertThat(campo.getAttribute("value")).isEqualTo(pair.getValue());
                 }
+
+                var campoIcmsRecolher = driver.findElement(By.id("valPorcentagemICMSRecolher"));
+                assertThat(campoIcmsRecolher.getAttribute("value")).isEqualTo("0,00");
             }
         }
     }

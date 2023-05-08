@@ -1,0 +1,55 @@
+@import '/src/app/variables.scss';
+
+mat-card-content {
+  padding-top: 15px;
+}
+
+.file-input {
+  @extend .flex-column;
+
+  height: 70px;
+}
+
+%flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex-center {
+  @extend %flex;
+
+  justify-content: center;
+  padding-bottom: 15px
+}
+
+#trocar-conta {
+  size: 50%;
+}
+
+.flex-column {
+  @extend %flex;
+
+  flex-direction: column;
+}
+
+.flex-row {
+  @extend %flex;
+
+  flex-direction: row;
+  justify-content: space-between;
+  width: -moz-available;
+}
+
+
+%response {
+  padding: 5px;
+  width: -moz-available;
+}
+
+.file-name {
+  @extend %response;
+}
+.file-error {
+  @extend %response;
+  color: rgb(255, 69, 69);
+}

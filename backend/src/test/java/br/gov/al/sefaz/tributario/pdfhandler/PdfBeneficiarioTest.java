@@ -38,23 +38,48 @@ public class PdfBeneficiarioTest {
 
         assertThat(quitacaoTabela).containsOnly(valoresEsperados);
     }
+
+    @Test
+    void extrairDadosComIdPdf01() {
+        final File fileQuitacao01 = new File("src/test/resources/pdfs/beneficiario/quitacao_01.pdf");
+
+        StrPair[] valoresEsperados = {
+                new StrPair("matricula", "3255"),
+                new StrPair("nome", "ITAMAR ALVES LEITE"),
+                new StrPair("cpf", "26020033449"),
+                new StrPair("valFaceBruto", "41666,67"),
+                new StrPair("valFaceHono", "8333,33"),
+//                new StrPair("VALOR DE FACE DE CONDENAÇÃO", "50000,00"),
+                new StrPair("valAcordoBruto", "12500,00"),
+                new StrPair("ValAcordoHono", "2500,00"),
+//                new StrPair("VALOR DO ACORDO TOTAL DA CONDENAÇÃO", "15000,00"),
+                new StrPair("ipaseal", "1375,00"),
+                new StrPair("irpf", "2190,02"),
+//                new StrPair("VALOR LÍQUIDO PARA O AUTOR", "8934,99")
+        };
+
+        Map<String, String> dados = PdfBeneficiario.extrairDadosV2(fileQuitacao01);
+
+        assertThat(dados).containsOnly(valoresEsperados);
+    }
+
     @Test
     void lerPDF02() {
         final File fileQuitacao02 = new File("src/test/resources/pdfs/beneficiario/quitacao_02.pdf");
 
         StrPair[] valoresEsperados = {
-                new StrPair(  "MATRICULA", "1563"),
+                new StrPair("MATRICULA", "1563"),
                 new StrPair("NOME", "IRACY LIMA SAMPAIO"),
-                new StrPair( "CPF", "02630621472"),
-                new StrPair(               "VALOR DE FACE BRUTO", "334782,61"),
-                new StrPair(               "VALOR DE FACE HONORÁRIOS", "50217,39"),
-                new StrPair(            "VALOR DE FACE DE CONDENAÇÃO", "385000,00"),
-                new StrPair(       "VALOR DE ACORDO BRUTO", "100434,78"),
-                new StrPair(         "VALOR DE ACORDO HONORÁRIOS", "15065,22"),
-                new StrPair(          "VALOR DO ACORDO TOTAL DA CONDENAÇÃO", "115500,00"),
-                new StrPair(          "VALOR DO AL PREVIDÊNCIA", "11047,83"),
-                new StrPair(          "VALOR DO IRPF", "0,00"),
-                new StrPair(          "VALOR LÍQUIDO PARA O AUTOR", "89386,96")
+                new StrPair("CPF", "02630621472"),
+                new StrPair("VALOR DE FACE BRUTO", "334782,61"),
+                new StrPair("VALOR DE FACE HONORÁRIOS", "50217,39"),
+                new StrPair("VALOR DE FACE DE CONDENAÇÃO", "385000,00"),
+                new StrPair("VALOR DE ACORDO BRUTO", "100434,78"),
+                new StrPair("VALOR DE ACORDO HONORÁRIOS", "15065,22"),
+                new StrPair("VALOR DO ACORDO TOTAL DA CONDENAÇÃO", "115500,00"),
+                new StrPair("VALOR DO AL PREVIDÊNCIA", "11047,83"),
+                new StrPair("VALOR DO IRPF", "0,00"),
+                new StrPair("VALOR LÍQUIDO PARA O AUTOR", "89386,96")
 
         };
         Map<String, String> quitacaoTabela = PdfBeneficiario.extrairDados(fileQuitacao02);

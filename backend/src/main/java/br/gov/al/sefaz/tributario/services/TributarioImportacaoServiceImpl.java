@@ -12,6 +12,7 @@ import java.util.Map;
 
 @Service
 public class TributarioImportacaoServiceImpl implements TributarioImportacaoService {
+
     @Override
     public void irParaContaGrafica(String contaGrafica) {
         if (PrecatorioService.naoLogou())
@@ -54,6 +55,17 @@ public class TributarioImportacaoServiceImpl implements TributarioImportacaoServ
 
             FabricaDriver.obterDriver().findElement(By.id(id)).sendKeys(valor);
         }
+
+        zerarIcmsARecolher();
+        clicarNoCampoNotaFiscal();
+    }
+
+    private void clicarNoCampoNotaFiscal() {
+        FabricaDriver.obterDriver().findElement(By.id("numNotaFiscal")).click();
+    }
+
+    private void zerarIcmsARecolher() {
+        FabricaDriver.obterDriver().findElement(By.id("valPorcentagemICMSRecolher")).clear();
     }
 
     public void close() {

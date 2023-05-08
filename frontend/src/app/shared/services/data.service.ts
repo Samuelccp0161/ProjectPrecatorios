@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class DataService {
   private logado = false
   private contaGrafica = ''
+  private numeroProcesso: string = '';
   
 
   getContaGrafica(): string {
@@ -21,5 +22,12 @@ export class DataService {
   setLogado(value: boolean) {
     this.logado = value;
   }
-  
+
+  setNumeroProcesso(numero: string) {
+    this.numeroProcesso = numero;
+  }
+
+  getNumeroProcesso() {
+    return this.numeroProcesso;
+  }
 }

@@ -66,7 +66,7 @@ public class PdfServiceImpl implements PdfService {
     public void saveFileBeneficiario(MultipartFile receivedFile) {
         saveFile(FILENAME_BENEFICIARIO, receivedFile);
         PdfBeneficiario.validadorPdf(getRootDir().resolve(FILENAME_BENEFICIARIO).toFile());
-        dadosBeneficiario = PdfBeneficiario.extrairDados(getRootDir().resolve(FILENAME_BENEFICIARIO).toFile());
+        dadosBeneficiario = PdfBeneficiario.extrairDadosV2(getRootDir().resolve(FILENAME_BENEFICIARIO).toFile());
     }
 
     public Map<String, String> extrairDadosTributario() {

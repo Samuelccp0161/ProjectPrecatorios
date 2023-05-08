@@ -15,8 +15,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PdfServiceImplTest {
     PdfServiceImpl pdfService;
@@ -217,18 +217,15 @@ class PdfServiceImplTest {
         private Map<String, String> getDados() {
             Map<String, String> valoresEsperados = new HashMap<>();
 
-            valoresEsperados.put("MATRICULA", "3255");
-            valoresEsperados.put("NOME", "ITAMAR ALVES LEITE");
-            valoresEsperados.put("CPF", "26020033449");
-            valoresEsperados.put("VALOR DE FACE BRUTO", "41666,67");
-            valoresEsperados.put("VALOR DE FACE HONORÁRIOS", "8333,33");
-            valoresEsperados.put("VALOR DE FACE DE CONDENAÇÃO", "50000,00");
-            valoresEsperados.put("VALOR DE ACORDO BRUTO", "12500,00");
-            valoresEsperados.put("VALOR DE ACORDO HONORÁRIOS", "2500,00");
-            valoresEsperados.put("VALOR DO ACORDO TOTAL DA CONDENAÇÃO", "15000,00");
-            valoresEsperados.put("VALOR DO AL PREVIDÊNCIA", "1375,00");
-            valoresEsperados.put("VALOR DO IRPF", "2190,02");
-            valoresEsperados.put("VALOR LÍQUIDO PARA O AUTOR", "8934,99");
+            valoresEsperados.put("matricula", "3255");
+            valoresEsperados.put("nome", "ITAMAR ALVES LEITE");
+            valoresEsperados.put("cpf", "26020033449");
+            valoresEsperados.put("valFaceBruto", "41666,67");
+            valoresEsperados.put("valFaceHono", "8333,33");
+            valoresEsperados.put("valAcordoBruto", "12500,00");
+            valoresEsperados.put("ValAcordoHono", "2500,00");
+            valoresEsperados.put("ipaceal", "1375,00");
+            valoresEsperados.put("irpf", "2190,02");
 
             return valoresEsperados;
         }

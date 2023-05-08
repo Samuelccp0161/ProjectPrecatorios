@@ -12,9 +12,10 @@ import { LoginComponent } from './login/login.component';
 import { ContentHeaderComponent } from './content-header/content-header.component';
 import { PrecatorioComponent } from './precatorio/precatorio.component';
 import {MatTabsModule} from "@angular/material/tabs";
-import { TributarioComponent } from './precatorio/tributario/tributario/tributario.component';
-import { BeneficiarioComponent } from './precatorio/beneficiario/beneficiario/beneficiario.component';
-import { UploadComponent } from './precatorio/tributario/upload/upload.component';
+import { TributarioComponent } from './tributario/tributario/tributario.component';
+import { BeneficiarioComponent } from './beneficiario/beneficiario/beneficiario.component';
+import { TributarioUploadComponent } from './tributario/upload/tributario-upload.component';
+import { BeneficiarioUploadComponent } from './beneficiario/upload/beneficiario-upload.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { UploadComponent } from './precatorio/tributario/upload/upload.component
     PrecatorioComponent,
     TributarioComponent,
     BeneficiarioComponent,
-    UploadComponent
+    TributarioUploadComponent,
+    BeneficiarioUploadComponent
   ],
     imports: [
         BrowserModule,

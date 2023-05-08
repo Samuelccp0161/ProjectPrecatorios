@@ -40,7 +40,7 @@ public class FabricaDriver {
                 .addAlternative(Options.edge())
                 .build();
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
         return driver;
     }

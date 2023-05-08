@@ -7,12 +7,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 public class BeneficiarioServiceImpl implements BeneficiarioService {
+    private static final Logger logger = LoggerFactory.getLogger(BeneficiarioService.class);
+
     @Override
     public void inserirNumeroProcesso(String numeroProcesso) {
         if (PrecatorioService.naoLogou())
@@ -52,6 +56,8 @@ public class BeneficiarioServiceImpl implements BeneficiarioService {
         for (var pair : dados.entrySet()) {
             String id = pair.getKey();
             String valor = pair.getValue();
+
+            logger.info("Tentando inserir no campo com id '" + id + "' o valor '" + valor + "'.");
 
             FabricaDriver.obterDriver().findElement(By.id(id)).sendKeys(valor);
         }
