@@ -19,7 +19,14 @@ class TributarioImportacaoServiceImplTest {
 
     @BeforeEach
     void criarPagina() {
+//        if (System.getProperty("testLocal") != null) {
+//            criarPaginaLocal();
+//        }
         pagina = new TributarioImportacaoServiceImpl();
+    }
+
+    private void criarPaginaLocal() {
+        FabricaDriver.obterNovoDriver().get("file://src/test/resources/precatorio-local/precatorio-nao-logado.html");
     }
 
     @AfterEach
