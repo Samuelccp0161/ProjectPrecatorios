@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable, tap} from "rxjs";
-import {Message} from "../../../../shared/message";
+import {Message} from "../../../shared/message";
 
 @Injectable({
   providedIn: 'root'

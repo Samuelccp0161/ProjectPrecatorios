@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
-import {DataService} from "../../../shared/services/data.service";
+import {DataService} from "../../shared/services/data.service";
 import {Router} from "@angular/router";
 import {TributarioService} from "./service/tributario.service";
 

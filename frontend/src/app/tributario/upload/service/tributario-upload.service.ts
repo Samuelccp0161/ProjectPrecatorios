@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {catchError, Observable, of} from "rxjs";
-import {Message} from "../../../../shared/message";
+import {Message} from "../../../shared/message";
 
 @Injectable({
   providedIn: 'root'
 })
-export class UploadService {
+export class TributarioUploadService {
   apiUpload = "/api/tributario-importacao/upload";
   apiSubmit = "/api/tributario-importacao/submit";
 

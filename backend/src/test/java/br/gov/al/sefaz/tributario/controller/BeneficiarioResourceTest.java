@@ -105,7 +105,7 @@ public class BeneficiarioResourceTest {
                 new MockMultipartFile("file", "Arquivo Mockado".getBytes());
 
         @Test
-        void comDiValido() throws Exception {
+        void comArquivoValido() throws Exception {
             mvc.perform(multipart(API_URL + "/upload").file(mockFile))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -115,7 +115,7 @@ public class BeneficiarioResourceTest {
             verify(pdfService).saveFileBeneficiario(mockFile);
         }
         @Test
-        void comDiInvalido() throws Exception {
+        void comArquivoInvalido() throws Exception {
             var pdfException = new PdfInvalidoException("O Arquivo enviado não é válido");
             doThrow(pdfException).when(pdfService).saveFileBeneficiario(mockFile);
 
