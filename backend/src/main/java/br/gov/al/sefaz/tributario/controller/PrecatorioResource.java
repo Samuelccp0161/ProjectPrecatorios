@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.tributario.controller;
 
-import br.gov.al.sefaz.tributario.services.PrecatorioService;
+import br.gov.al.sefaz.tributario.service.PrecatorioService;
 import br.gov.al.sefaz.tributario.vo.Login;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

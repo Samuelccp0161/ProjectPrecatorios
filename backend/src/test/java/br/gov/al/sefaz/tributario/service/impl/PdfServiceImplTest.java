@@ -1,6 +1,7 @@
-package br.gov.al.sefaz.tributario.services;
+package br.gov.al.sefaz.tributario.service.impl;
 
-import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.service.PdfService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

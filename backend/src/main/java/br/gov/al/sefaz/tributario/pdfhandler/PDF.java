@@ -2,7 +2,7 @@ package br.gov.al.sefaz.tributario.pdfhandler;
 
 
 import br.gov.al.sefaz.tributario.pdfhandler.util.Pagina;
-import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.exception.PdfInvalidoException;
 import technology.tabula.RectangularTextContainer;
 import technology.tabula.Table;
 

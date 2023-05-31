@@ -1,7 +1,8 @@
-package br.gov.al.sefaz.tributario.services;
+package br.gov.al.sefaz.tributario.service.impl;
 
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
+import br.gov.al.sefaz.tributario.service.PrecatorioService;
 import org.openqa.selenium.By;
 import org.springframework.stereotype.Service;
 

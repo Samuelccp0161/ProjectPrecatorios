@@ -2,7 +2,7 @@
 para executar, entre na pasta raiz do projeto:
 - faça o build:
 `` 
-$ mvn clean package -Dambiente.teste=local``
+$ mvn clean package``
 - Suba os conteiners do docker:
 ``$ docker-compose up --build -d``
 - abrir o browser e acessar: 

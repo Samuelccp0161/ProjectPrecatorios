@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
-import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.exception.PdfInvalidoException;
 import br.gov.al.sefaz.tributario.pdfhandler.util.Area;
 import br.gov.al.sefaz.tributario.pdfhandler.util.CharPosition;
 import br.gov.al.sefaz.tributario.pdfhandler.util.StringSearcher;

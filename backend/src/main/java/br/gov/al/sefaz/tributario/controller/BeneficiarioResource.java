@@ -1,8 +1,8 @@
 package br.gov.al.sefaz.tributario.controller;
 
-import br.gov.al.sefaz.tributario.message.ResponseMessage;
-import br.gov.al.sefaz.tributario.services.BeneficiarioService;
-import br.gov.al.sefaz.tributario.services.PdfService;
+import br.gov.al.sefaz.tributario.vo.ResponseMessage;
+import br.gov.al.sefaz.tributario.service.BeneficiarioService;
+import br.gov.al.sefaz.tributario.service.PdfService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,7 +1,8 @@
-package br.gov.al.sefaz.tributario.services;
+package br.gov.al.sefaz.tributario.service.impl;
 
 import br.gov.al.sefaz.tributario.pdfhandler.PDF;
 import br.gov.al.sefaz.tributario.pdfhandler.PdfBeneficiario;
+import br.gov.al.sefaz.tributario.service.PdfService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;

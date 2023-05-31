@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.tributario;
 
-import br.gov.al.sefaz.tributario.services.PdfServiceImpl;
+import br.gov.al.sefaz.tributario.service.impl.PdfServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

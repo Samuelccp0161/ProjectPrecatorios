@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.tributario.pdfhandler;
 
-import br.gov.al.sefaz.tributario.pdfhandler.exception.PdfInvalidoException;
+import br.gov.al.sefaz.tributario.exception.PdfInvalidoException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 

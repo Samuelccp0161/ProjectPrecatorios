@@ -2,7 +2,7 @@ package br.gov.al.sefaz.tributario.controller;
 
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.exception.handler.CustomExceptionHandler;
-import br.gov.al.sefaz.tributario.services.PrecatorioService;
+import br.gov.al.sefaz.tributario.service.PrecatorioService;
 import br.gov.al.sefaz.tributario.vo.Login;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

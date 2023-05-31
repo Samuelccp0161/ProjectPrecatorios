@@ -1,4 +1,4 @@
-package br.gov.al.sefaz.tributario.services;
+package br.gov.al.sefaz.tributario.service;
 
 import java.util.Map;
 

@@ -1,7 +1,9 @@
-package br.gov.al.sefaz.tributario.services;
+package br.gov.al.sefaz.tributario.service.impl;
 
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
+import br.gov.al.sefaz.tributario.service.PrecatorioService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +56,7 @@ class PrecatorioServiceImplTest {
             WebDriver driver = FabricaDriver.obterDriver();
             assertDoesNotThrow(() -> driver.findElement(By.linkText("Sair")));
 
-            assertThat(PrecatorioService.naoLogou()).isFalse();
+            Assertions.assertThat(PrecatorioService.naoLogou()).isFalse();
         }
     }
 }

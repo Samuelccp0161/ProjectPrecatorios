@@ -1,4 +1,4 @@
-package br.gov.al.sefaz.tributario.pdfhandler.exception;
+package br.gov.al.sefaz.tributario.exception;
 
 import br.gov.al.sefaz.tributario.pdfhandler.PDF;
 

@@ -1,4 +1,4 @@
-package br.gov.al.sefaz.tributario.message;
+package br.gov.al.sefaz.tributario.vo;
 
 public class ResponseMessage {
     private String message;
