@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import java.nio.file.Paths;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,28 +20,40 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrecatorioServiceImplTest {
 
     private PrecatorioServiceImpl precatorioService;
+    private String url = "https://precatorios.sefaz.al.gov.br/";
 
     @BeforeEach
     void criarPagina() {
         precatorioService = new PrecatorioServiceImpl();
+
+        var ambiente = System.getProperty("ambiente", "local");
+        if (!ambiente.equalsIgnoreCase("remoto")) {
+            var paginaLocal = Paths.get("src/test/resources/precatorio-local/precatorio-nao-logado.html")
+                    .toAbsolutePath();
+            url = "file://" + paginaLocal;
+            precatorioService.setUrl(url);
+            FabricaDriver.setLocal();
+        }
+
     }
 
     @AfterEach
     void fecharPagina() {
         precatorioService.close();
+        FabricaDriver.setRemoto();
     }
 
     @Test
     void deveriaIniciarNaPaginaPrecatorios() {
         precatorioService.abrirPagina();
 
-        assertThat(FabricaDriver.obterDriver().getCurrentUrl()).isEqualTo("https://precatorios.sefaz.al.gov.br/");
+        assertThat(FabricaDriver.obterDriver().getCurrentUrl()).isEqualTo(url);
     }
 
     @Nested
     public class AoLogar {
-        private static final String usuario = "abc";
-        private static final String senha = "def";
+        private static final String usuario = "ab";
+        private static final String senha = "de";
 
         @Test
         void comCredenciaisInvalidas() {

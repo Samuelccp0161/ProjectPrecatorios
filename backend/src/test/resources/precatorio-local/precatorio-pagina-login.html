@@ -2,12 +2,14 @@
 <html lang="en">
 
 <body>
-<form name="formulario">
+<form name="formulario" action="precatorio-pagina-logada.html">
   <b>Login:</b>
-  <input name="txtLogin" type="text" id="txtLogin">
+  <input name="txtLogin" type="text" id="txtLogin" required minlength="3">
+  <br>
   <b>Senha:</b>
-  <input name="txtSenha" type="password" id="txtSenha">
-  <a href="precatorio-pagina-logada.html" id="btnEntrar"> <b>entrar</b> </a>
+  <input name="txtSenha" type="password" id="txtSenha" required minlength="3">
+  <br>
+  <button id="btnEntrar" type="submit"> <b>entrar</b> </button>
 </form>
 </body>
 

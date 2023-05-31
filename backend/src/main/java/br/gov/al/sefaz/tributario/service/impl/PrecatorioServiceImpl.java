@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PrecatorioServiceImpl implements PrecatorioService {
+    private String url = "https://precatorios.sefaz.al.gov.br/";
+
     @Override
     public void logar(String usuario, String senha) {
         abrirPagina();
@@ -35,6 +37,10 @@ public class PrecatorioServiceImpl implements PrecatorioService {
     }
 
     protected void abrirPagina() {
-        FabricaDriver.obterNovoDriver().get("https://precatorios.sefaz.al.gov.br/");
+        FabricaDriver.criarWebdriver().get(url);
+    }
+
+    protected void setUrl(String url) {
+        this.url = url;
     }
 }
