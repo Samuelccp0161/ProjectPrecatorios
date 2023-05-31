@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,22 +17,28 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TributarioImportacaoServiceImplTest {
 
     private TributarioImportacaoServiceImpl pagina;
+    private PrecatorioServiceImpl precatorioService;
 
     @BeforeEach
     void criarPagina() {
-//        if (System.getProperty("testLocal") != null) {
-//            criarPaginaLocal();
-//        }
+        precatorioService = new PrecatorioServiceImpl();
         pagina = new TributarioImportacaoServiceImpl();
-    }
 
-    private void criarPaginaLocal() {
-        FabricaDriver.obterNovoDriver().get("file://src/test/resources/precatorio-local/precatorio-nao-logado.html");
+        var ambiente = System.getProperty("ambiente", "local");
+        if (!ambiente.equalsIgnoreCase("remoto")) {
+            var paginaLocal = Paths.get("src/test/resources/precatorio-local/precatorio-nao-logado.html")
+                    .toAbsolutePath();
+            String url = "file://" + paginaLocal;
+            precatorioService.setUrl(url);
+            FabricaDriver.setLocal();
+        }
+
     }
 
     @AfterEach
     void fecharPagina() {
         pagina.close();
+        FabricaDriver.setRemoto();
     }
 
     @Nested @DisplayName("Ao tentar entrar na conta")
@@ -51,7 +58,7 @@ class TributarioImportacaoServiceImplTest {
         class Logado {
             @BeforeEach
             void fazerLogin() {
-                new PrecatorioServiceImpl().logar("sdcabral", "Samuka0810");
+                precatorioService.logar("sdcabral", "Samuka0810");
             }
 
             @Test @DisplayName("com conta valida deveria entrar com sucesso")
@@ -91,7 +98,7 @@ class TributarioImportacaoServiceImplTest {
         @Nested @DisplayName("apos o login")
         class Logado {
             @BeforeEach void fazerLogin() {
-                new PrecatorioServiceImpl().logar("sdcabral", "Samuka0810");
+                precatorioService.logar("sdcabral", "Samuka0810");
             }
 
             @Test @DisplayName("sem entrar na conta deveria lançar exceção de conta invalida")
@@ -115,8 +122,10 @@ class TributarioImportacaoServiceImplTest {
                     assertThat(campo.getAttribute("value")).isEqualTo(pair.getValue());
                 }
 
-                var campoIcmsRecolher = driver.findElement(By.id("valPorcentagemICMSRecolher"));
-                assertThat(campoIcmsRecolher.getAttribute("value")).isEqualTo("0,00");
+                if (FabricaDriver.isRemoto()){
+                    var campoIcmsRecolher = driver.findElement(By.id("valPorcentagemICMSRecolher"));
+                    assertThat(campoIcmsRecolher.getAttribute("value")).isEqualTo("0,00");
+                }
             }
         }
     }
