@@ -40,7 +40,7 @@ public class PrecatorioServiceImpl implements PrecatorioService {
         FabricaDriver.criarWebdriver().get(url);
     }
 
-    protected void setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 }

@@ -1,5 +1,6 @@
 package br.gov.al.sefaz.tributario.service.impl;
 
+import br.gov.al.sefaz.tributario.TestUtil;
 import br.gov.al.sefaz.tributario.exception.ContaGraficaInvalidaException;
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
@@ -8,7 +9,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,19 +24,12 @@ class TributarioImportacaoServiceImplTest {
         precatorioService = new PrecatorioServiceImpl();
         pagina = new TributarioImportacaoServiceImpl();
 
-        var ambiente = System.getProperty("ambiente", "local");
-        if (!ambiente.equalsIgnoreCase("remoto")) {
-            var paginaLocal = Paths.get("src/test/resources/precatorio-local/precatorio-nao-logado.html")
-                    .toAbsolutePath();
-            String url = "file://" + paginaLocal;
-            precatorioService.setUrl(url);
-            FabricaDriver.setLocal();
-        }
-
+        TestUtil.configurarAmbientePagina(precatorioService);
+        TestUtil.configurarAmbienteWebdriver();
     }
 
     @AfterEach
-    void fecharPagina() {
+    void fecharPaginaEResetarFabricaDriver() {
         pagina.close();
         FabricaDriver.setRemoto();
     }

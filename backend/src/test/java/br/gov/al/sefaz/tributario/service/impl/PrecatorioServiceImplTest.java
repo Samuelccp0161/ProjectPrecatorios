@@ -1,5 +1,6 @@
 package br.gov.al.sefaz.tributario.service.impl;
 
+import br.gov.al.sefaz.tributario.TestUtil;
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
 import br.gov.al.sefaz.tributario.service.PrecatorioService;
@@ -11,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import java.nio.file.Paths;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class PrecatorioServiceImplTest {
 
@@ -25,16 +24,8 @@ class PrecatorioServiceImplTest {
     @BeforeEach
     void criarPagina() {
         precatorioService = new PrecatorioServiceImpl();
-
-        var ambiente = System.getProperty("ambiente", "local");
-        if (!ambiente.equalsIgnoreCase("remoto")) {
-            var paginaLocal = Paths.get("src/test/resources/precatorio-local/precatorio-nao-logado.html")
-                    .toAbsolutePath();
-            url = "file://" + paginaLocal;
-            precatorioService.setUrl(url);
-            FabricaDriver.setLocal();
-        }
-
+        url = TestUtil.configurarAmbientePagina(precatorioService);
+        TestUtil.configurarAmbienteWebdriver();
     }
 
     @AfterEach
