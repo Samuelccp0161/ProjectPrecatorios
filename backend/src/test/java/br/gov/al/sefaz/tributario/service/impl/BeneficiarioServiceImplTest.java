@@ -1,5 +1,6 @@
 package br.gov.al.sefaz.tributario.service.impl;
 
+import br.gov.al.sefaz.tributario.TestUtil;
 import br.gov.al.sefaz.tributario.exception.LoginException;
 import br.gov.al.sefaz.tributario.exception.ProcessoInvalidoException;
 import br.gov.al.sefaz.tributario.selenium.FabricaDriver;
@@ -15,16 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class BeneficiarioServiceImplTest {
 
+    private PrecatorioServiceImpl precatorioService;
     private BeneficiarioServiceImpl pagina;
 
     @BeforeEach
     void criarPagina() {
+        precatorioService = new PrecatorioServiceImpl();
         pagina = new BeneficiarioServiceImpl();
+
+        TestUtil.configurarAmbientePagina(precatorioService);
+        TestUtil.configurarAmbienteWebdriver();
     }
 
     @AfterEach
-    void fecharPagina() {
+    void fecharPaginaEResetarFabricaDriver() {
         pagina.close();
+        FabricaDriver.setRemoto();
     }
 
     @Nested
@@ -46,7 +53,7 @@ class BeneficiarioServiceImplTest {
         class Logado {
             @BeforeEach
             void fazerLogin() {
-                new PrecatorioServiceImpl().logar("sdcabral", "Samuka0810");
+                precatorioService.logar("sdcabral", "Samuka0810");
             }
 
             @Test @DisplayName("com processo valido deveria entrar com sucesso")
@@ -87,7 +94,7 @@ class BeneficiarioServiceImplTest {
         @Nested @DisplayName("apos o login")
         class Logado {
             @BeforeEach void fazerLogin() {
-                new PrecatorioServiceImpl().logar("sdcabral", "Samuka0810");
+                precatorioService.logar("sdcabral", "Samuka0810");
             }
 
             @Test @DisplayName("sem entrar na conta deveria lançar exceção de conta invalida")
