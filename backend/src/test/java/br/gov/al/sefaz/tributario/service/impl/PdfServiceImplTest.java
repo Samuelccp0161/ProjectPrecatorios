@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,14 +52,6 @@ class PdfServiceImplTest {
         assertThat(savedFile).hasContent(fileContent);
     }
 
-    @Test
-    void deveriaJogarExceptionAoReceberArquivoNaoPdf() {
-        MockMultipartFile mockFile = new MockMultipartFile("file", "pdf Invalido".getBytes());
-        assertThatThrownBy(() -> pdfService.saveDiFile(mockFile))
-                .isInstanceOf(PdfInvalidoException.class)
-                .hasMessageContaining("Arquivo inválido!");
-    }
-
     @Nested
     class AoEnviarUmArquivoDI {
 
@@ -98,8 +88,7 @@ class PdfServiceImplTest {
                     "valFrete", "7043,00",
                     "valSeguro", "0,00",
                     "valVMLE", "49600,27",
-                    "numDI", "2216298998",
-                    "dataDMI", dataAtual()
+                    "numDI", "2216298998"
             );
 
             try (FileInputStream fileStream = new FileInputStream(diValido)) {
@@ -109,15 +98,6 @@ class PdfServiceImplTest {
                 assertThat(pdfService.getDadosDI()).containsExactlyInAnyOrderEntriesOf(dados);
             }
         }
-
-        private String dataAtual() {
-            LocalDate date = LocalDate.now();
-
-            DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
-
-            return formatterData.format(date);
-        }
-
     }
 
     @Nested

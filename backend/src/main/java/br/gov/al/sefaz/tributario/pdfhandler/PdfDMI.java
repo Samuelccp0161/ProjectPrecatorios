@@ -109,9 +109,9 @@ public class PdfDMI extends PDF {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
-            CharPosition topPos = searcher.search(document, "OUTRAS INFORMAÇÕES").get(0);
-            CharPosition bottomPos = searcher.search(document, "Enquadramentos Legais").get(0);
-            CharPosition rightPos = searcher.search(document, "Valor da Importação").get(0);
+            CharPosition topPos = searcher.findPositions(document, "OUTRAS INFORMAÇÕES").get(0);
+            CharPosition bottomPos = searcher.findPositions(document, "Enquadramentos Legais").get(0);
+            CharPosition rightPos = searcher.findPositions(document, "Valor da Importação").get(0);
 
             float bottom = bottomPos.getY() - bottomPos.getHeight() * 2;
             float right = rightPos.getX() - rightPos.getCharWidth();
@@ -129,10 +129,10 @@ public class PdfDMI extends PDF {
         try (PDDocument document = PDDocument.load(this.path.toFile())) {
             StringSearcher searcher = new StringSearcher();
 
-            CharPosition topPos = searcher.search(document, "BASE DE CÁLCULO").get(0);
-            List<CharPosition> result = searcher.search(document, "R$");
+            CharPosition topPos = searcher.findPositions(document, "BASE DE CÁLCULO").get(0);
+            List<CharPosition> result = searcher.findPositions(document, "R$");
             CharPosition bottomPos = result.get(result.size() - 1);
-            CharPosition leftPos = searcher.search(document, "Valor da Importação").get(0);
+            CharPosition leftPos = searcher.findPositions(document, "Valor da Importação").get(0);
 
             float x = leftPos.getX() - leftPos.getCharWidth();
             if (leftPos.getCharacter() == 'v')

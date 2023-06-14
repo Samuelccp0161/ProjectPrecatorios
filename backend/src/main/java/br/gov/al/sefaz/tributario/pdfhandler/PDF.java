@@ -36,10 +36,6 @@ public abstract class PDF {
         return new PdfDMI(file);
     }
 
-    public static PDF di(File file) {
-        return new PdfDI(file);
-    }
-
     protected Map<String, String> converterTable(Table table) {
         Map<String, String> mapCampoId = criarMapID();
         Map<String, String> mapIdValor = tabelaDefault();

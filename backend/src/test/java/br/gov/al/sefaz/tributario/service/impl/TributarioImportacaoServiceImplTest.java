@@ -9,6 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,11 +117,25 @@ class TributarioImportacaoServiceImplTest {
                     assertThat(campo.getAttribute("value")).isEqualTo(pair.getValue());
                 }
 
+                var campoData = driver.findElement(By.id("dataDMI"));
+                String data = campoData.getAttribute("value").replaceAll("/", "");
+                assertThat(data).isEqualTo(dataAtual());
+
+
                 if (FabricaDriver.isRemoto()){
                     var campoIcmsRecolher = driver.findElement(By.id("valPorcentagemICMSRecolher"));
                     assertThat(campoIcmsRecolher.getAttribute("value")).isEqualTo("0,00");
                 }
             }
+
+            private String dataAtual() {
+                LocalDate date = LocalDate.now();
+
+                DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
+
+                return formatterData.format(date);
+            }
+
         }
     }
 }

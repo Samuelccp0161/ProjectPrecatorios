@@ -2,6 +2,7 @@ package br.gov.al.sefaz.tributario.service.impl;
 
 import br.gov.al.sefaz.tributario.pdfhandler.PDF;
 import br.gov.al.sefaz.tributario.pdfhandler.PdfBeneficiario;
+import br.gov.al.sefaz.tributario.pdfhandler.PdfDI;
 import br.gov.al.sefaz.tributario.service.PdfService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
@@ -55,7 +56,7 @@ public class PdfServiceImpl implements PdfService {
 
     public void saveDiFile(MultipartFile receivedFile) {
         saveFile(FILENAME_DI, receivedFile);
-        dadosDI = PDF.di(getRootDir().resolve(FILENAME_DI).toFile()).getTabela();
+        dadosDI = new PdfDI(getRootDir().resolve(FILENAME_DI)).extrairDados();
     }
 
     public void saveDmiFile(MultipartFile receivedFile) {

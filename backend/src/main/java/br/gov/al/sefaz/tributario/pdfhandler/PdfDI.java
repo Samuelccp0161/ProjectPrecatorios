@@ -5,101 +5,139 @@ import br.gov.al.sefaz.tributario.pdfhandler.util.Area;
 import br.gov.al.sefaz.tributario.pdfhandler.util.CharPosition;
 import br.gov.al.sefaz.tributario.pdfhandler.util.StringSearcher;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import technology.tabula.ObjectExtractor;
+import technology.tabula.Page;
+import technology.tabula.RectangularTextContainer;
 import technology.tabula.Table;
 import technology.tabula.extractors.BasicExtractionAlgorithm;
 
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-//TODO: eliminar a duplicação com PdfDMI
-public class PdfDI extends PDF{
+import static br.gov.al.sefaz.tributario.pdfhandler.util.StrUtil.truncar;
+
+public class PdfDI {
+    private final Path arquivo;
     private final String numeroDi;
-    private Area tabela;
+    private final Area areaTabela;
 
-    protected PdfDI(File file) {
-        super(file);
-        try {
-            this.numeroDi = getNumeroDI();
-            encontrarTabela();
+    public PdfDI(Path path) {
+        if (!path.toFile().exists())
+            throw new PdfInvalidoException("Arquivo inexistente!");
+
+        this.arquivo = path;
+
+        try (PDDocument pdf = PDDocument.load(arquivo.toFile())) {
+            this.numeroDi = extrairNumeroDi(pdf);
+            this.areaTabela = encontrarTabela(pdf);
         } catch (Exception e) {
-            throw new PdfInvalidoException(Tipo.DI, e);
+            throw new PdfInvalidoException("O Arquivo enviado não é um 'DI' válido", e);
         }
     }
 
-    private void encontrarTabela() throws IOException {
-        try (PDDocument document = PDDocument.load(this.path.toFile())) {
-            StringSearcher searcher = new StringSearcher();
+    private static String extrairNumeroDi(PDDocument pdf) throws IOException {
+        StringSearcher searcher = new StringSearcher(pdf);
+        String resultado = searcher.findFirstLineWith("Declaração");
+        return resultado.replaceAll("\\D", "");
+    }
 
-            CharPosition topPos = searcher.search(document, "Valores").get(0);
-            CharPosition bottomPos = searcher.search(document, "Tributos").get(0);
+    private static Area encontrarTabela(PDDocument pdf) throws IOException {
+        StringSearcher searcher = new StringSearcher(pdf);
 
-            float x = 0;
-            float y = topPos.getY() - topPos.getHeight() * 2;
-            float bottom = bottomPos.getY() + bottomPos.getHeight() - bottomPos.getHeight() * 2;
-            float right = pagina.width();
+        CharPosition topPos = searcher.findFirstPositionWith("Valores");
+        CharPosition bottomPos = searcher.findFirstPositionWith("Tributos");
 
-            tabela = Area.withPosition(x, y).withWidth(right).andHeight(bottom - y);
+        float x = 0;
+        float y = topPos.getY() - topPos.getHeight() * 2;
+        float height = bottomPos.getY() - bottomPos.getHeight() - y;
+        float width = pdf.getPage(0).getMediaBox().getWidth();
+
+        return Area.withPosition(x, y).withWidth(width).andHeight(height);
+    }
+
+    public Map<String, String> extrairDados() {
+        Table tabela = extrairTabela();
+//        printTable(tabela);
+        return converterTable(tabela);
+    }
+
+    private Map<String, String> converterTable(Table tabela) {
+        Iterator<String> campos = extrairColuna(tabela, 0);
+        Iterator<String> valores = extrairColuna(tabela, 2);
+
+        Map<String, String> dados = new HashMap<>() {{
+            put("numDI", numeroDi);
+            put("valFrete", "0,00");
+            put("valSeguro", "0,00");
+            put("valVMLE", "0,00");
+        }};
+
+        while (campos.hasNext() && valores.hasNext()) {
+            String campo = campos.next();
+            String valor = valores.next();
+
+            if (!valor.matches("\\d+,\\d{2}")) continue;    //pular se valor nao eh monetario
+
+            switch (campo) {
+                case "frete":  dados.put("valFrete", valor);
+                case "seguro": dados.put("valSeguro", valor);
+                case "vmle":   dados.put("valVMLE", valor);
+            }
+        }
+
+        return dados;
+    }
+
+    private Iterator<String> extrairColuna(Table tabela, int col) {
+        return tabela.getRows().stream()
+                .map(row -> row.get(col))
+                .map(RectangularTextContainer::getText)
+                .map(String::toLowerCase)
+                .map(str -> str.replaceAll("[^\\w,]", ""))
+                .map(String::strip)
+                .iterator();
+    }
+
+    private Table extrairTabela() {
+        try (PDDocument pdf = PDDocument.load(arquivo.toFile())) {
+            ObjectExtractor oe = new ObjectExtractor(pdf);
+
+            Page pagina = oe.extract(1).getArea(
+                    areaTabela.getY(),
+                    areaTabela.getX(),
+                    areaTabela.getY() + areaTabela.getHeight(),
+                    areaTabela.getX() + areaTabela.getWidth()
+            );
+
+            return new BasicExtractionAlgorithm().extract(pagina).get(0);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private Table extrairTable() {
-        BasicExtractionAlgorithm ea = new BasicExtractionAlgorithm();
-        return ea.extract(pagina.getArea(tabela).getPage()).get(0);
+    protected String getNumeroDi() {
+        return numeroDi;
     }
 
-    @Override public Map<String, String> getTabela() {
-        Table table = extrairTable();
-        return converterTable(table);
+    protected Area getAreaTabela() {
+        return areaTabela;
     }
 
-    @Override protected Map<String, String> criarMapID() {
-        Map<String, String> map = new HashMap<>();
+    @SuppressWarnings("unused")
+    protected void printTable(Table tabela) {
+        String cellFMT = " %-30s |";
 
-        map.put("frete" , "valFrete");
-        map.put("seguro" , "valSeguro");
-        map.put("vmle" , "valVMLE");
-
-        return map;
-    }
-
-    @Override protected Map<String, String> tabelaDefault() {
-        Map<String, String> map = new HashMap<>();
-
-        map.put("valSeguro", "0,00");
-        map.put( "valFrete", "0,00");
-        map.put(  "valVMLE", "0,00");
-
-        map.put("numDI", numeroDi);
-        map.put("dataDMI", dataAtual());
-
-        return map;
-    }
-    public String getNumeroDI() throws IOException {
-        String cabecalho = pagina.getCabecalho().toUpperCase();
-        String linhaDeclaracao = getLinhaDeclaracao(cabecalho);
-
-        String[] words = linhaDeclaracao.split(" ");
-
-        if (words.length < 2) return "";
-        return words[1];
-    }
-
-    private static String getLinhaDeclaracao(String cabecalho) {
-        return cabecalho.lines()
-                .filter(str -> str.contains("DECLARAÇÃO:"))
-                .findFirst()
-                .map(str -> str.replaceAll("[/-]", ""))
-                .orElse("");
-    }
-
-    public String dataAtual(){
-        LocalDate date = LocalDate.now();
-
-        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
-
-        return formatterData.format(date);
+        System.out.println("#----------------------#");
+        for (var row : tabela.getRows()) {
+            System.out.print("|");
+            for (var cell : row)
+                System.out.printf(cellFMT, truncar(cell.getText(), 30));
+            System.out.println();
+        }
+        System.out.println("#----------------------#");
     }
 }

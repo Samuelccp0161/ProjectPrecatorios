@@ -10,6 +10,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
@@ -51,6 +53,8 @@ public class TributarioImportacaoServiceImpl implements TributarioImportacaoServ
         if (naoEntrouNaContaGrafica())
             throw new ContaGraficaInvalidaException("Conta gráfica não informada!");
 
+        FabricaDriver.obterDriver().findElement(By.id("dataDMI")).sendKeys(dataAtual());
+
         for (var pair : dados.entrySet()) {
             String id = pair.getKey();
             String valor = pair.getValue();
@@ -58,8 +62,17 @@ public class TributarioImportacaoServiceImpl implements TributarioImportacaoServ
             FabricaDriver.obterDriver().findElement(By.id(id)).sendKeys(valor);
         }
 
+
         zerarIcmsARecolher();
         clicarNoCampoNotaFiscal();
+    }
+
+    private String dataAtual() {
+        LocalDate date = LocalDate.now();
+
+        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("ddMMuuuu");
+
+        return formatterData.format(date);
     }
 
     private void clicarNoCampoNotaFiscal() {
