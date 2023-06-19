@@ -1,70 +1,102 @@
 package br.gov.al.sefaz.precatorio.pdfhandler;
 
 import br.gov.al.sefaz.precatorio.exception.PdfInvalidoException;
+import br.gov.al.sefaz.precatorio.pdfhandler.util.Searcher;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PdfBeneficiario {
+    private final Path arquivo;
 
-    protected static String extraiTextoDoPDF(File caminho) {
-        try (PDDocument pdfDocument = PDDocument.load(caminho)) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(pdfDocument);
-        } catch (IOException e) {
-            throw new PdfInvalidoException("Arquivo inválido!");
+    public PdfBeneficiario(Path path) {
+        if (!path.toFile().exists())
+            throw new PdfInvalidoException("Arquivo inexistente!");
+
+        this.arquivo = path;
+
+        try (PDDocument pdf = PDDocument.load(arquivo.toFile())) {
+            validarPdf(pdf);
+        } catch (Exception e) {
+            throw new PdfInvalidoException("O Arquivo enviado não é válido", e);
         }
     }
-    public static void validadorPdf(File file) {
-        if (!extraiTextoDoPDF(file).contains("TERMO DE QUITAÇÃO"))
-            throw new PdfInvalidoException("O Arquivo enviado não é válido");
-    }
-    public static HashMap<String, String> extrairDados(File file){
-        HashMap<String, String> dados = new HashMap<>();
-        final String texto = extraiTextoDoPDF(file);
 
-        List<String> lines = texto.lines().collect(Collectors.toList());
-
-        for (String line : lines) {
-            String[] campoValor = line.split(":");
-
-            if (campoValor.length == 2)
-                dados.put(campoValor[0].strip(), campoValor[1].strip());
+    private static void validarPdf(PDDocument pdf) {
+        try {
+            new Searcher(pdf).doSearch("termo de quitação").getFirstLine().orElseThrow();
+        } catch (Exception e) {
+            throw new PdfInvalidoException("Formatação do Pdf inválida", e);
         }
-        return dados;
     }
 
-    public static Map<String, String> extrairDadosV2(File file) {
-        var tabela = extrairDados(file);
-        Map<String, String> dados = new HashMap<>();
+    public Map<String, String> extrairDados() {
+        try (PDDocument pdf = PDDocument.load(arquivo.toFile())) {
+            Map<String, String> dados = getDadosPadrao();
 
-        for (var par : mapNomeCampoParaId().entrySet()) {
-            String campo = par.getKey();
-            String id = par.getValue();
+            List<Row> rows = extrairRowsDoPdf(pdf);
 
-            String valor = tabela.getOrDefault(campo, "");
-            dados.put(id, valor);
+            for (Row row : rows) {
+                switch (row.campo) {
+                    case "MATRICULA": dados.put("matricula", row.valor);
+                    case "NOME": dados.put("nome", row.valor.toUpperCase());
+                    case "CPF": dados.put("cpf", row.valor);
+                    case "VALOR DE FACE BRUTO": dados.put("valFaceBruto", row.valor);
+                    case "VALOR DE FACE HONORÁRIOS": dados.put("valFaceHono", row.valor);
+                    case "VALOR DE ACORDO BRUTO": dados.put("valAcordoBruto", row.valor);
+                    case "VALOR DE ACORDO HONORÁRIOS": dados.put("ValAcordoHono", row.valor);
+                    case "VALOR DO AL PREVIDÊNCIA": dados.put("ipaseal", row.valor);
+                    case "VALOR DO IRPF": dados.put("irpf", row.valor);
+                }
+            }
+
+            return dados;
+        } catch (Exception e) {
+            throw new PdfInvalidoException("O Arquivo enviado não é válido", e);
         }
 
-        return dados;
     }
 
-    private static Map<String, String> mapNomeCampoParaId() {
-        return Map.of(           "MATRICULA", "matricula",
-                                      "NOME", "nome",
-                                       "CPF", "cpf",
-                       "VALOR DE FACE BRUTO", "valFaceBruto",
-                  "VALOR DE FACE HONORÁRIOS", "valFaceHono",
-                     "VALOR DE ACORDO BRUTO", "valAcordoBruto",
-                "VALOR DE ACORDO HONORÁRIOS", "ValAcordoHono",
-                   "VALOR DO AL PREVIDÊNCIA", "ipaseal",
-                             "VALOR DO IRPF", "irpf"
-        );
+    private List<Row> extrairRowsDoPdf(PDDocument pdf) throws IOException {
+        List<String> lines = new Searcher(pdf).doSearch(":").getLines();
+
+        return lines.stream()
+                .map(l -> l.split(":"))
+                .map(List::of)
+                .map(Row::new)
+                .collect(Collectors.toList());
+    }
+
+    private static HashMap<String, String> getDadosPadrao() {
+        return new HashMap<>() {{
+            put("matricula", "");
+            put("nome", "");
+            put("cpf", "");
+            put("valFaceBruto", "0,00");
+            put("valFaceHono", "0,00");
+            put("valAcordoBruto", "0,00");
+            put("ValAcordoHono", "0,00");
+            put("ipaseal", "0,00");
+            put("irpf", "0,00");
+        }};
+    }
+
+    static class Row {
+        final String campo;
+        final String valor;
+
+        Row(String campo, String valor) {
+            this.campo = campo.strip().toUpperCase();
+            this.valor = valor.strip();
+        }
+
+        Row(List<String> list) {
+            this(list.get(0), list.get(1));
+        }
     }
 }

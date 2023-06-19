@@ -1,6 +1,7 @@
 package br.gov.al.sefaz.precatorio.pdfhandler.util;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SearchResult {
@@ -24,8 +25,8 @@ public class SearchResult {
                 .collect(Collectors.toList());
     }
 
-    public String getFirstLine() {
-        return results.size() > 0 ? results.get(0).getLine() : "";
+    public Optional<String> getFirstLine() {
+        return results.stream().map(Searcher.Result::getLine).findFirst();
     }
 
     public Area getFirstArea() {

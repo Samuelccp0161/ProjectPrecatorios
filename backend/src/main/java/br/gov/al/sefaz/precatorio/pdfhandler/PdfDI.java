@@ -35,10 +35,14 @@ public class PdfDI {
         }
     }
 
-    private static String extrairNumeroDi(PDDocument pdf) throws IOException {
-        Searcher searcher = new Searcher(pdf);
-        String resultado = searcher.doSearch("Declaração").getFirstLine();
-        return resultado.replaceAll("\\D", "");
+    private static String extrairNumeroDi(PDDocument pdf) {
+        try {
+            Searcher searcher = new Searcher(pdf);
+            String resultado = searcher.doSearch("Declaração").getFirstLine().orElseThrow();
+            return resultado.replaceAll("\\D", "");
+        } catch (Exception e) {
+            throw new PdfInvalidoException("Formatação do Pdf inválida", e);
+        }
     }
 
     private static Area encontrarTabela(PDDocument pdf) throws IOException {
