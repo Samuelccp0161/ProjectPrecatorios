@@ -1,0 +1,91 @@
+<mat-card style="width: 250px">
+    <app-content-header [previous]="'/precatorio'" [subtitle]="'Conta Grafica: ' + contaGrafica"></app-content-header>
+
+    <mat-divider mat-inset> </mat-divider>
+
+    <mat-card-content>
+        <div class="file-input">
+            <div class="flex-row">
+                <button type="button" mat-raised-button (click)="dmiInput.click()">
+                    Escolher DMI
+                </button>
+                <input hidden (change)="onDmiSelected($event)" #dmiInput type="file" />
+                <mat-icon fontIcon="check" *ngIf="dmi.isValid"></mat-icon>
+            </div>
+
+            <span *ngIf="dmi.file == null; then dmiError; else dmiName"></span>
+        </div>
+    </mat-card-content>
+
+    <mat-divider mat-inset> </mat-divider>
+
+    <mat-card-content>
+        <div class="file-input">
+            <div class="flex-row">
+                <button type="button" mat-raised-button (click)="diInput.click()">
+                    Escolher DI
+                </button>
+                <input hidden (change)="onDiSelected($event)" #diInput type="file" />
+                <mat-icon fontIcon="check" *ngIf="di.isValid"></mat-icon>
+            </div>
+
+            <span *ngIf="di.file == null; then diError; else diName"></span>
+        </div>
+    </mat-card-content>
+
+    <mat-divider mat-inset> </mat-divider>
+
+    <mat-card-content>
+        <div class="flex-row">
+            <button color="accent" mat-raised-button mat-icon-button routerLink="/login">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+
+            <button
+                    mat-raised-button
+                    color="primary"
+                    id="upload-pdfs"
+                    (click)="enviarPdfs()"
+                    [disabled]="
+          di.file == null || dmi.file == null || (di.wasSend && dmi.wasSend)
+        "
+            >
+                Enviar
+            </button>
+
+            <button
+                    mat-raised-button
+                    color="primary"
+                    id="submit-pdfs"
+                    (click)="onSubmit()"
+                    [disabled]="!di.wasSend || !dmi.wasSend"
+            >
+                Preencher
+            </button>
+        </div>
+    </mat-card-content>
+
+    <mat-card-footer style="height: 4px">
+    <span [hidden]="!loading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </span>
+    </mat-card-footer>
+</mat-card>
+
+<!-- Templates -->
+<ng-template #dmiName>
+    <span class="file-name">{{ dmi.getFilename() }}</span>
+</ng-template>
+
+<ng-template #dmiError>
+    <span class="file-error">{{ dmi.response }}</span>
+</ng-template>
+
+<ng-template #diName>
+    <span class="file-name">{{ di.getFilename() }}</span>
+</ng-template>
+
+<ng-template #diError>
+    <span class="file-error">{{ di.response }}</span>
+</ng-template>
+<!-- Templates -->

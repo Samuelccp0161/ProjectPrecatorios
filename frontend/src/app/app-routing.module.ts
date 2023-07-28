@@ -1,14 +1,16 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 
-import { ContaGraficaComponent } from './conta-grafica/conta-grafica.component';
-import { LoginComponent } from './login/login.component';
-import { UploadPdfsComponent } from './upload-pdfs/upload-pdfs.component';
+import {LoginComponent} from './login/login.component';
+import {PrecatorioComponent} from "./precatorio/precatorio.component";
+import {TributarioUploadComponent} from "./tributario/upload/tributario-upload.component";
+import {BeneficiarioUploadComponent} from "./beneficiario/upload/beneficiario-upload.component";
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
-  {path: "grafica", component: ContaGraficaComponent},
-  {path: "upload", component: UploadPdfsComponent},
+  {path: "precatorio", component: PrecatorioComponent},
+  {path: "precatorio/tributario-upload", component: TributarioUploadComponent},
+  {path: "precatorio/beneficiario-upload", component: BeneficiarioUploadComponent},
   {path: "", redirectTo: "login", pathMatch: "full"},
 ];
 

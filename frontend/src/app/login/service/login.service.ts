@@ -1,25 +1,21 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
-import { Message } from 'src/app/shared/message';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable, tap} from 'rxjs';
+import {Message} from 'src/app/shared/message';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  api = 'api/login'
+    api = 'api/login'
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { }
 
-  logar(form: FormData): Observable<Message> {
-    return this.http.post<Message>(this.api, form).pipe(
-      catchError(err => {
-        if (err.status == 404 || err.status == 504) {
-          let msg = new Message("Não foi possivel conectar!");
-          err.error = msg;
-        }
-        return of(err.error)
-      })
-    )
-  }
+    logar(usuario: string, senha: string): Observable<Message> {
+        let body = {usuario, senha}
+
+        return this.http.post<Message>(this.api, body).pipe(
+            tap(res => { console.log(res) }),
+        )
+    }
 }

@@ -1,0 +1,55 @@
+<mat-card style="width: 250px">
+    <app-content-header [previous]="'/precatorio'" [subtitle]="'Processo: ' + numeroProcesso"></app-content-header>
+
+    <mat-divider mat-inset> </mat-divider>
+
+    <mat-card-content>
+        <div class="file-input">
+            <div class="flex-row">
+                <button type="button" mat-raised-button (click)="fileInput.click()">
+                    Escolher PDF
+                </button>
+                <input hidden (change)="onFileSelected($event)" #fileInput type="file" />
+                <mat-icon fontIcon="check" *ngIf="pdf.isValid"></mat-icon>
+            </div>
+
+            <span *ngIf="pdf.file == null; then pdfError; else pdfName"></span>
+        </div>
+    </mat-card-content>
+
+    <mat-divider mat-inset> </mat-divider>
+
+    <mat-card-content>
+        <div class="flex-row">
+            <button color="accent" mat-raised-button mat-icon-button routerLink="/login">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+
+            <button id="upload-pdf" mat-raised-button color="primary"
+                    (click)="enviarPdf()" [disabled]="pdf.file == null || pdf.wasSend">
+                Enviar
+            </button>
+
+            <button id="submit-pdf" mat-raised-button color="primary"
+                    (click)="onSubmit()" [disabled]="!pdf.wasSend">
+                Preencher
+            </button>
+        </div>
+    </mat-card-content>
+
+    <mat-card-footer style="height: 4px">
+    <span [hidden]="!loading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </span>
+    </mat-card-footer>
+</mat-card>
+
+<!-- Templates -->
+<ng-template #pdfName>
+    <span class="file-name">{{ pdf.getFilename() }}</span>
+</ng-template>
+
+<ng-template #pdfError>
+    <span class="file-error">{{ pdf.response }}</span>
+</ng-template>
+<!-- Templates -->

@@ -1,0 +1,5 @@
+file_path|matricula|nome|cpf|valFaceBruto|valFaceHono|valAcordoBruto|ValAcordoHono|ipaseal|irpf
+src/test/resources/pdfs/beneficiario/quitacao_01.pdf|3255|ITAMAR ALVES LEITE|26020033449|41666,67|8333,33|12500,00|2500,00|1375,00|2190,02
+src/test/resources/pdfs/beneficiario/quitacao_02.pdf|1563|IRACY LIMA SAMPAIO|02630621472|334782,61|50217,39|100434,78|15065,22|11047,83|0,00
+src/test/resources/pdfs/beneficiario/quitacao_03.pdf|55851|DELMA MARIA COSTA DE AZEVEDO PANTALEAO|38442418415|22222,22|4444,44|6666,67|1333,33|733,33|762,31
+src/test/resources/pdfs/beneficiario/quitacao_04.pdf|2576|IRACY PEREIRA TAVARES|11140593404|521739,13|78260,87|156521,74|23478,26|17217,39|37439,34

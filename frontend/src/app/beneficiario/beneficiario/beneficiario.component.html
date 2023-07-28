@@ -1,0 +1,35 @@
+<mat-card>
+    <mat-card-content>
+        <form (ngSubmit)="submitProcesso()">
+            <mat-form-field appearance="outline">
+                <mat-label>Número do Processo</mat-label>
+                <input matInput type="text" id="numero-processo"
+                       placeholder="Número do Processo" [formControl]="numeroProcesso"/>
+            </mat-form-field>
+            <br />
+
+            <div class="flex-row">
+                <div>
+                    <button mat-raised-button type="submit" id="submit-num-processo"
+                            color="primary" [disabled]="numeroProcesso.invalid">
+                        Entrar
+                    </button>
+
+                    <span style="padding-left: 15px"></span>
+
+                    <button id="btnBack" mat-raised-button mat-icon-button
+                            color="accent" routerLink="/login">
+                        <mat-icon>arrow_back</mat-icon>
+                    </button>
+                </div>
+                <div class="error-msg">{{ errorMessage }}</div>
+            </div>
+        </form>
+    </mat-card-content>
+
+    <mat-card-footer style="height: 4px">
+    <span [hidden]="!loading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </span>
+    </mat-card-footer>
+</mat-card>
