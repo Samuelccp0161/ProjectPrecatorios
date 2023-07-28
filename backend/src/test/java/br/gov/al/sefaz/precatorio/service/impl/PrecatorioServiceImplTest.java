@@ -24,8 +24,7 @@ class PrecatorioServiceImplTest {
     @BeforeEach
     void criarPagina() {
         precatorioService = new PrecatorioServiceImpl();
-        url = TestUtil.configurarAmbientePagina(precatorioService);
-        TestUtil.configurarAmbienteWebdriver();
+        url = TestUtil.configurarAmbiente(precatorioService);
     }
 
     @AfterEach

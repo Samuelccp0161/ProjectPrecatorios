@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
@@ -63,6 +65,10 @@ public class BeneficiarioServiceImpl implements BeneficiarioService {
 
             FabricaDriver.obterDriver().findElement(By.id(id)).sendKeys(valor);
         }
+
+        var data = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+
+        FabricaDriver.obterDriver().findElement(By.id("datTermoQuitacao")).sendKeys(data);
     }
 
     public void close() {

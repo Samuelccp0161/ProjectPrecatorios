@@ -7,6 +7,8 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 public class FabricaDriver {
@@ -49,7 +51,7 @@ public class FabricaDriver {
     }
 
     private static WebDriver criarWebdriverLocal() {
-        var driver = new ChromeDriver(Options.chrome().setHeadless(true));
+        var driver = new ChromeDriver(Options.chrome());
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
 
@@ -72,6 +74,13 @@ public class FabricaDriver {
     }
 
     public static void setLocal() {
+        FabricaDriver.isRemoto = false;
+    }
+    public static void setLocal(String webdriverExecutablePath) {
+        Path path = Paths.get(webdriverExecutablePath).toAbsolutePath();
+        if (path.toFile().isFile()) {
+            System.setProperty("webdriver.chrome.driver", path.toString());
+        }
         FabricaDriver.isRemoto = false;
     }
 

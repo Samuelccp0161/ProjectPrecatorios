@@ -26,8 +26,7 @@ class TributarioImportacaoServiceImplTest {
         precatorioService = new PrecatorioServiceImpl();
         pagina = new TributarioImportacaoServiceImpl();
 
-        TestUtil.configurarAmbientePagina(precatorioService);
-        TestUtil.configurarAmbienteWebdriver();
+        TestUtil.configurarAmbiente(precatorioService);
     }
 
     @AfterEach

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,8 +26,7 @@ class BeneficiarioServiceImplTest {
         precatorioService = new PrecatorioServiceImpl();
         pagina = new BeneficiarioServiceImpl();
 
-        TestUtil.configurarAmbientePagina(precatorioService);
-        TestUtil.configurarAmbienteWebdriver();
+        TestUtil.configurarAmbiente(precatorioService);
     }
 
     @AfterEach
@@ -34,8 +35,7 @@ class BeneficiarioServiceImplTest {
         FabricaDriver.setRemoto();
     }
 
-    @Nested
-    @DisplayName("Ao tentar numero do processo")
+    @Nested @DisplayName("Ao tentar numero do processo")
     class AoInserirNumProcesso {
 
         @Nested @DisplayName("sem estar logado")
@@ -117,8 +117,18 @@ class BeneficiarioServiceImplTest {
 
                     assertThat(campo.getAttribute("value")).isEqualTo(pair.getValue());
                 }
+
+                var dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                var campoData = driver.findElement(By.id("datTermoQuitacao"));
+                assertThat(campoData.getAttribute("value")).isEqualTo(dataAtual);
             }
         }
     }
 
+    @Test
+    void name() {
+        var dataAtual = LocalDate.now();
+
+        System.out.println(dataAtual.format(DateTimeFormatter.ofPattern("ddMMyyyy")));
+    }
 }
