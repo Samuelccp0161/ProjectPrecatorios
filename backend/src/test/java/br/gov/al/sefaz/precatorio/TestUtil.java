@@ -11,42 +11,34 @@ public class TestUtil {
             "src/test/resources/precatorio-local/precatorio-nao-logado.html";
 
     public static String configurarAmbiente(PrecatorioServiceImpl precatorioService) {
-        String ambienteDriver = System.getProperty("ambiente.webdriver", "docker");
+        String ambienteDriver = System.getProperty("ambiente.webdriver", "host");
+
+        switch (ambienteDriver.toLowerCase()) {
+            case "local":   {
+                String url = configurarAmbienteLocal();
+                precatorioService.setUrl(url);
+                return url;
+            }
+            case "docker":  return configurarAmbienteDocker();
+            default: return configurarAmbienteHost();
+        }
+    }
+
+    private static String configurarAmbienteHost() {
+        Navegador.setAmbienteToHost();
+        return URL;
+    }
+    private static String configurarAmbienteDocker() {
+        Navegador.setAmbienteToDocker();
+        return URL;
+    }
+    private static String configurarAmbienteLocal() {
+        Navegador.setAmbienteToLocal();
         String ambienteSite = System.getProperty("ambiente.site", "web");
-
-        if (ambienteDriver.equalsIgnoreCase("docker"))
-            return URL;
-
-        Navegador.setLocal("src/test/resources/chromedriver");
 
         if (ambienteSite.equalsIgnoreCase("web"))
             return URL;
 
-        String urlLocal = "file://" + Paths.get(PAGINA_LOCAL).toAbsolutePath();
-        precatorioService.setUrl(urlLocal);
-
-        return urlLocal;
-    }
-
-
-    public static void configurarAmbienteWebdriver() {
-        String ambienteDriver = System.getProperty("ambiente.webdriver", "local");
-        if (!ambienteDriver.equalsIgnoreCase("remoto")) {
-            Navegador.setLocal();
-        }
-    }
-
-    public static String configurarAmbientePagina(PrecatorioServiceImpl precatorioService) {
-        String url = TestUtil.URL;
-        String ambienteSite = System.getProperty("ambiente.site", "local");
-
-        if (!ambienteSite.equalsIgnoreCase("remoto")) {
-            var paginaLocal = Paths.get("src/test/resources/precatorio-local/precatorio-nao-logado.html")
-                    .toAbsolutePath();
-            url = "file://" + paginaLocal;
-            precatorioService.setUrl(url);
-        }
-
-        return url;
+        return "file://" + Paths.get(PAGINA_LOCAL).toAbsolutePath();
     }
 }

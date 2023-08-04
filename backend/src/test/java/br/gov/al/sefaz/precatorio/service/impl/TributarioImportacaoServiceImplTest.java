@@ -30,9 +30,8 @@ class TributarioImportacaoServiceImplTest {
     }
 
     @AfterEach
-    void fecharPaginaEResetarFabricaDriver() {
+    void fecharPaginaEResetarNavegador() {
         pagina.close();
-        Navegador.setRemoto();
     }
 
     @Nested @DisplayName("Ao tentar entrar na conta")
@@ -121,7 +120,7 @@ class TributarioImportacaoServiceImplTest {
                 assertThat(data).isEqualTo(dataAtual());
 
 
-                if (Navegador.isRemoto()){
+                if (!Navegador.isLocal()){
                     var campoIcmsRecolher = driver.findElement(By.id("valPorcentagemICMSRecolher"));
                     assertThat(campoIcmsRecolher.getAttribute("value")).isEqualTo("0,00");
                 }

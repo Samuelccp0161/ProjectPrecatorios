@@ -1,9 +1,6 @@
 package br.gov.al.sefaz.precatorio.exception.handler;
 
-import br.gov.al.sefaz.precatorio.exception.ContaGraficaInvalidaException;
-import br.gov.al.sefaz.precatorio.exception.ExceptionResponse;
-import br.gov.al.sefaz.precatorio.exception.LoginException;
-import br.gov.al.sefaz.precatorio.exception.ProcessoInvalidoException;
+import br.gov.al.sefaz.precatorio.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,6 +48,15 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionResponse response = converterParaExceptionResponse(ex, request);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PdfInvalidoException.class)
+    public final ResponseEntity<ExceptionResponse> handlePdfInvalidoExceptions(
+            Exception ex, WebRequest request)
+    {
+        ExceptionResponse response = converterParaExceptionResponse(ex, request);
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static ExceptionResponse converterParaExceptionResponse(Exception ex, WebRequest request) {

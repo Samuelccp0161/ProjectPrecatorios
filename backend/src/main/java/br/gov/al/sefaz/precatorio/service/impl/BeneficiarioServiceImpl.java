@@ -72,6 +72,6 @@ public class BeneficiarioServiceImpl implements BeneficiarioService {
     }
 
     public void close() {
-        Navegador.close();
+        Navegador.fecharDriver();
     }
 }

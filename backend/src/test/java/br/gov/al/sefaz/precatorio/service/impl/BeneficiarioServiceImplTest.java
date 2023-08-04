@@ -30,9 +30,8 @@ class BeneficiarioServiceImplTest {
     }
 
     @AfterEach
-    void fecharPaginaEResetarFabricaDriver() {
+    void fecharPaginaEResetarNavegador() {
         pagina.close();
-        Navegador.setRemoto();
     }
 
     @Nested @DisplayName("Ao tentar numero do processo")
@@ -66,13 +65,6 @@ class BeneficiarioServiceImplTest {
                     driver.findElement(By.id("matricula"));
                 });
             }
-
-//            @Test @DisplayName("com conta invalida deveria jogar exceção")
-//            public void comContaInvalida() {
-//                assertThatThrownBy(() -> pagina.irParaContaGrafica("abcd"))
-//                        .isInstanceOf(ContaGraficaInvalidaException.class)
-//                        .hasMessage("Conta gráfica inválida!");
-//            }
         }
     }
 

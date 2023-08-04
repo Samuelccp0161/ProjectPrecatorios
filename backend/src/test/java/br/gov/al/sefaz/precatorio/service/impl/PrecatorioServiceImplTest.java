@@ -30,7 +30,6 @@ class PrecatorioServiceImplTest {
     @AfterEach
     void fecharPagina() {
         precatorioService.close();
-        Navegador.setRemoto();
     }
 
     @Test

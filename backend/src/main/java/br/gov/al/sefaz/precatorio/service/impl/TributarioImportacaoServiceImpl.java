@@ -84,6 +84,6 @@ public class TributarioImportacaoServiceImpl implements TributarioImportacaoServ
     }
 
     public void close() {
-        Navegador.close();
+        Navegador.fecharDriver();
     }
 }

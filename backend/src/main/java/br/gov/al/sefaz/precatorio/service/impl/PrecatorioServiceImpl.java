@@ -33,11 +33,11 @@ public class PrecatorioServiceImpl implements PrecatorioService {
     }
 
     public void close() {
-        Navegador.close();
+        Navegador.fecharDriver();
     }
 
     protected void abrirPagina() {
-        Navegador.criarWebdriver().get(url);
+        Navegador.obterNovoDriver().get(url);
     }
 
     public void setUrl(String url) {
