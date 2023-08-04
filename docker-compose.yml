@@ -1,9 +1,9 @@
 services:
   tributario:
     build: .
-#    ports:
-#      - 8080:8080
-    network_mode: host
+    ports:
+      - 8080:8080
+#    network_mode: host
 
   selenium:
     image: selenium/standalone-chrome:4.8.3-20230404

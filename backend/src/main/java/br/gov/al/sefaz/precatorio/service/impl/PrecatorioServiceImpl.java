@@ -1,7 +1,7 @@
 package br.gov.al.sefaz.precatorio.service.impl;
 
 import br.gov.al.sefaz.precatorio.exception.LoginException;
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import br.gov.al.sefaz.precatorio.service.PrecatorioService;
 import org.openqa.selenium.By;
 import org.springframework.stereotype.Service;
@@ -23,21 +23,21 @@ public class PrecatorioServiceImpl implements PrecatorioService {
     }
 
     private void preencherLogin(String usuario, String senha) {
-        FabricaDriver.obterDriver().findElement(By.id("txtLogin")).sendKeys(usuario);
-        FabricaDriver.obterDriver().findElement(By.id("txtSenha")).sendKeys(senha);
-        FabricaDriver.obterDriver().findElement(By.id("btnEntrar")).click();
+        Navegador.obterDriver().findElement(By.id("txtLogin")).sendKeys(usuario);
+        Navegador.obterDriver().findElement(By.id("txtSenha")).sendKeys(senha);
+        Navegador.obterDriver().findElement(By.id("btnEntrar")).click();
     }
 
     private void mudarParaFramePrincipal() {
-        FabricaDriver.obterDriver().switchTo().frame("principal");
+        Navegador.obterDriver().switchTo().frame("principal");
     }
 
     public void close() {
-        FabricaDriver.close();
+        Navegador.close();
     }
 
     protected void abrirPagina() {
-        FabricaDriver.criarWebdriver().get(url);
+        Navegador.criarWebdriver().get(url);
     }
 
     public void setUrl(String url) {

@@ -2,7 +2,7 @@ package br.gov.al.sefaz.precatorio.service.impl;
 
 import br.gov.al.sefaz.precatorio.TestUtil;
 import br.gov.al.sefaz.precatorio.exception.LoginException;
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import br.gov.al.sefaz.precatorio.service.PrecatorioService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -30,14 +30,14 @@ class PrecatorioServiceImplTest {
     @AfterEach
     void fecharPagina() {
         precatorioService.close();
-        FabricaDriver.setRemoto();
+        Navegador.setRemoto();
     }
 
     @Test
     void deveriaIniciarNaPaginaPrecatorios() {
         precatorioService.abrirPagina();
 
-        assertThat(FabricaDriver.obterDriver().getCurrentUrl()).isEqualTo(url);
+        assertThat(Navegador.obterDriver().getCurrentUrl()).isEqualTo(url);
     }
 
     @Nested
@@ -57,7 +57,7 @@ class PrecatorioServiceImplTest {
         void comCredenciaisValidas() {
             precatorioService.logar("sdcabral", "Samuka0810");
 
-            WebDriver driver = FabricaDriver.obterDriver();
+            WebDriver driver = Navegador.obterDriver();
             assertDoesNotThrow(() -> driver.findElement(By.linkText("Sair")));
 
             Assertions.assertThat(PrecatorioService.naoLogou()).isFalse();

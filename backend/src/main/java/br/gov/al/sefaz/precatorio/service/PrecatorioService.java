@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.precatorio.service;
 
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import org.openqa.selenium.By;
 
 public interface PrecatorioService {
@@ -8,7 +8,7 @@ public interface PrecatorioService {
 
     static boolean naoLogou() {
         try {
-            return FabricaDriver.obterDriver().findElement(By.linkText("Sair")) == null;
+            return Navegador.obterDriver().findElement(By.linkText("Sair")) == null;
         }
         catch (Exception ignore) {
             return true;

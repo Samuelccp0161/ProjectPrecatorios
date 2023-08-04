@@ -3,7 +3,7 @@ package br.gov.al.sefaz.precatorio.service.impl;
 import br.gov.al.sefaz.precatorio.TestUtil;
 import br.gov.al.sefaz.precatorio.exception.ContaGraficaInvalidaException;
 import br.gov.al.sefaz.precatorio.exception.LoginException;
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -32,7 +32,7 @@ class TributarioImportacaoServiceImplTest {
     @AfterEach
     void fecharPaginaEResetarFabricaDriver() {
         pagina.close();
-        FabricaDriver.setRemoto();
+        Navegador.setRemoto();
     }
 
     @Nested @DisplayName("Ao tentar entrar na conta")
@@ -59,7 +59,7 @@ class TributarioImportacaoServiceImplTest {
             public void comContaValida() {
                 pagina.irParaContaGrafica("12");
 
-                WebDriver driver = FabricaDriver.obterDriver();
+                WebDriver driver = Navegador.obterDriver();
                 WebElement contaGrafica = driver.findElement(By.id("sequencialContaGrafica"));
 
                 assertThat(contaGrafica.getAttribute("value")).isEqualTo("12");
@@ -108,7 +108,7 @@ class TributarioImportacaoServiceImplTest {
 
                 pagina.preencherDados(dados);
 
-                var driver = FabricaDriver.obterDriver();
+                var driver = Navegador.obterDriver();
                 for (var pair : dados.entrySet()) {
                     String id = pair.getKey();
                     var campo = driver.findElement(By.id(id));
@@ -121,7 +121,7 @@ class TributarioImportacaoServiceImplTest {
                 assertThat(data).isEqualTo(dataAtual());
 
 
-                if (FabricaDriver.isRemoto()){
+                if (Navegador.isRemoto()){
                     var campoIcmsRecolher = driver.findElement(By.id("valPorcentagemICMSRecolher"));
                     assertThat(campoIcmsRecolher.getAttribute("value")).isEqualTo("0,00");
                 }

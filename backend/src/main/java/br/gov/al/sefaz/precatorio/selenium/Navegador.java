@@ -11,8 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 
-public class FabricaDriver {
-    public static final String WEBDRIVER_REMOTE_URL = "http://localhost:4444";
+public class Navegador {
+    public static final String WEBDRIVER_REMOTE_URL = "http://selenium:4444";
 
     private static boolean isRemoto = true;
     private static WebDriver webdriver;
@@ -70,18 +70,18 @@ public class FabricaDriver {
     }
 
     public static void setRemoto() {
-        FabricaDriver.isRemoto = true;
+        Navegador.isRemoto = true;
     }
 
     public static void setLocal() {
-        FabricaDriver.isRemoto = false;
+        Navegador.isRemoto = false;
     }
     public static void setLocal(String webdriverExecutablePath) {
         Path path = Paths.get(webdriverExecutablePath).toAbsolutePath();
         if (path.toFile().isFile()) {
             System.setProperty("webdriver.chrome.driver", path.toString());
         }
-        FabricaDriver.isRemoto = false;
+        Navegador.isRemoto = false;
     }
 
     public static boolean isRemoto() {

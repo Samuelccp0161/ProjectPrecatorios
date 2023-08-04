@@ -1,6 +1,6 @@
 package br.gov.al.sefaz.precatorio;
 
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import br.gov.al.sefaz.precatorio.service.impl.PrecatorioServiceImpl;
 
 import java.nio.file.Paths;
@@ -17,7 +17,7 @@ public class TestUtil {
         if (ambienteDriver.equalsIgnoreCase("docker"))
             return URL;
 
-        FabricaDriver.setLocal("src/test/resources/chromedriver");
+        Navegador.setLocal("src/test/resources/chromedriver");
 
         if (ambienteSite.equalsIgnoreCase("web"))
             return URL;
@@ -32,7 +32,7 @@ public class TestUtil {
     public static void configurarAmbienteWebdriver() {
         String ambienteDriver = System.getProperty("ambiente.webdriver", "local");
         if (!ambienteDriver.equalsIgnoreCase("remoto")) {
-            FabricaDriver.setLocal();
+            Navegador.setLocal();
         }
     }
 

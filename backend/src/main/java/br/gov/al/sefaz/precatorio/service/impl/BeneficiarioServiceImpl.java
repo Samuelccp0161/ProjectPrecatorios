@@ -2,7 +2,7 @@ package br.gov.al.sefaz.precatorio.service.impl;
 
 import br.gov.al.sefaz.precatorio.exception.LoginException;
 import br.gov.al.sefaz.precatorio.exception.ProcessoInvalidoException;
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import br.gov.al.sefaz.precatorio.service.BeneficiarioService;
 import br.gov.al.sefaz.precatorio.service.PrecatorioService;
 import org.openqa.selenium.By;
@@ -34,17 +34,17 @@ public class BeneficiarioServiceImpl implements BeneficiarioService {
     }
 
     private void irParaContaBeneficiario() {
-        FabricaDriver.obterDriver().findElement(By.id("mi_0_4")).click();
+        Navegador.obterDriver().findElement(By.id("mi_0_4")).click();
     }
 
     private void inserirNumero(String numeroProcesso) {
-        WebElement campoProcesso = FabricaDriver.obterDriver().findElement(By.id("numProcesso"));
+        WebElement campoProcesso = Navegador.obterDriver().findElement(By.id("numProcesso"));
         campoProcesso.sendKeys(numeroProcesso, Keys.ENTER);
     }
 
     private boolean naoEstaEmBeneficiario(){
         try {
-            return FabricaDriver.obterDriver().findElement(By.id("matricula")) == null;
+            return Navegador.obterDriver().findElement(By.id("matricula")) == null;
         } catch (NoSuchElementException ignore) {
             return true;
         }
@@ -63,15 +63,15 @@ public class BeneficiarioServiceImpl implements BeneficiarioService {
 
             logger.info("Tentando inserir no campo com id '" + id + "' o valor '" + valor + "'.");
 
-            FabricaDriver.obterDriver().findElement(By.id(id)).sendKeys(valor);
+            Navegador.obterDriver().findElement(By.id(id)).sendKeys(valor);
         }
 
         var data = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
 
-        FabricaDriver.obterDriver().findElement(By.id("datTermoQuitacao")).sendKeys(data);
+        Navegador.obterDriver().findElement(By.id("datTermoQuitacao")).sendKeys(data);
     }
 
     public void close() {
-        FabricaDriver.close();
+        Navegador.close();
     }
 }

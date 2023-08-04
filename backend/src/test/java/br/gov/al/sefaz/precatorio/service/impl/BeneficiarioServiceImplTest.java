@@ -3,7 +3,7 @@ package br.gov.al.sefaz.precatorio.service.impl;
 import br.gov.al.sefaz.precatorio.TestUtil;
 import br.gov.al.sefaz.precatorio.exception.LoginException;
 import br.gov.al.sefaz.precatorio.exception.ProcessoInvalidoException;
-import br.gov.al.sefaz.precatorio.selenium.FabricaDriver;
+import br.gov.al.sefaz.precatorio.selenium.Navegador;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -32,7 +32,7 @@ class BeneficiarioServiceImplTest {
     @AfterEach
     void fecharPaginaEResetarFabricaDriver() {
         pagina.close();
-        FabricaDriver.setRemoto();
+        Navegador.setRemoto();
     }
 
     @Nested @DisplayName("Ao tentar numero do processo")
@@ -60,7 +60,7 @@ class BeneficiarioServiceImplTest {
             public void comContaValida() {
                 pagina.inserirNumeroProcesso("12");
 
-                WebDriver driver = FabricaDriver.obterDriver();
+                WebDriver driver = Navegador.obterDriver();
 
                 assertDoesNotThrow(() -> {
                     driver.findElement(By.id("matricula"));
@@ -110,7 +110,7 @@ class BeneficiarioServiceImplTest {
 
                 pagina.preencherDados(dados);
 
-                var driver = FabricaDriver.obterDriver();
+                var driver = Navegador.obterDriver();
                 for (var pair : dados.entrySet()) {
                     String id = pair.getKey();
                     var campo = driver.findElement(By.id(id));
